@@ -1,5 +1,5 @@
 
-import { Editor, EditorStateContentType } from '@/interface/editor';
+import { EditorStateContentType } from '@/interface/editor';
 import { h1Element, linkElement, pElement, spanChild } from './typography';
 import { getChildren, getContent } from '@/utils/editors/data';
 
@@ -11,7 +11,6 @@ export const childIntegration = (
     }
 ) => {
     let parentElement: HTMLElement;
-    let childElement: HTMLElement;
 
     if (editorStateData.type === "InlineLink") {
         parentElement = linkElement({ editorStateData })
@@ -30,10 +29,12 @@ export const childIntegration = (
         const editableStatChildren = getChildren({ parentId: editorStateData.children });
         editableStatChildren.map((value, index) => {
             const editableState = getContent({ id: value.contentId })
-            childElement = childIntegration({
-                editorStateData: editableState,
-            })
-            parentElement.appendChild(childElement);
+            if (editableState) {
+                const childElement = childIntegration({
+                    editorStateData: editableState,
+                })
+                parentElement.appendChild(childElement);
+            }
         })
     }
 
@@ -43,7 +44,7 @@ export const childIntegration = (
             hasChild = true;
         }
         if (hasChild) {
-            childElement = spanChild({
+            const childElement = spanChild({
                 editorStateData: editorStateData
             })
             parentElement.appendChild(childElement);

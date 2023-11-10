@@ -1,6 +1,10 @@
 'use client'
 
 import { useEditor } from '@/context/editor'
+import { updateCaretToMatch } from '@/utils/actions';
+import { stateCheck } from '@/utils/actions/stateCheck';
+import { getContent, updateValueContent } from '@/utils/editors/data';
+import { getCurrentlyEditedElement } from '@/utils/editors/node';
 import React, { useEffect } from 'react'
 
 const Editor = () => {
@@ -10,6 +14,8 @@ const Editor = () => {
         renderEditorDom();
     })
 
+    let id: string;
+    let currentPosition: number;
 
     return (
         <div
@@ -29,19 +35,39 @@ const Editor = () => {
                  * new data that is added in the node and then the json
                 */
 
+                let { selection, node } = getCurrentlyEditedElement()
 
-                console.log("here")
+                console.log("onInput node", node)
+                if (node && node.firstChild && selection) {
+                    if (node.firstChild.nodeType === 3) {
+                        updateValueContent({
+                            id: id,
+                            value: node.textContent
+                        });
+                    }
+                    else {
+                        stateCheck({ node })
+                        // const parentContent = getContent({ id: node.id })
+                        // if (!parentContent.parentId) {
+                        //     ////TODO: May need a future check
+                        // }
+                    }
+                    // add data match with the json
+                }
+
             }}
+
             onKeyDown={async (event: React.KeyboardEvent<HTMLDivElement>) => {
                 event.preventDefault();
 
                 // call the function getSelect to get the node and the current selection 
+                const { selection, node } = getCurrentlyEditedElement();
 
                 // using the node fetch the id, current position
 
-                let id;
+                let id = node.id;
 
-                let currentPosition;
+                let currentPosition = selection!.focusOffset;
 
                 /**
                  * call the getTextSelection to fetch the selected text in a form of an array
@@ -60,12 +86,26 @@ const Editor = () => {
                      * Here goes the function to add the added key value to the appropriate json
                      * and update the node accordingly
                      * */
+                    let firstValueData = node.textContent.slice(0, currentPosition);
+                    let secondValueData = node.textContent.slice(currentPosition, node.textContent.length);
 
+                    console.log("firstValueData", firstValueData)
+                    console.log("secondValueData", secondValueData)
+                    console.log("event.key", event.key)
+
+                    updateValueContent({ id, value: firstValueData + event.key + secondValueData })
+
+                    currentPosition++;
 
                     /**
                      * setup the carter position based on the current one by adding one to it 
                      * then call the update function using the id and the currentPosition
                      * */
+                    updateCaretToMatch({
+                        id,
+                        currentPosition,
+                        selection: selection!
+                    })
                 }
 
 
@@ -158,6 +198,9 @@ const Editor = () => {
                      * */
                 }
             }}
+
+
+
             onPaste={(event) => {
 
                 event.preventDefault();
@@ -171,6 +214,8 @@ const Editor = () => {
                 console.log("lines", lines);
 
             }}
+
+
             onCopy={(event) => {
 
                 event.preventDefault();
