@@ -45,7 +45,8 @@ export const childIntegration = (
         }
         if (hasChild) {
             const childElement = spanChild({
-                editorStateData: editorStateData
+                editorStateData: editorStateData,
+                parentNodeExist: true
             })
             parentElement.appendChild(childElement);
         }

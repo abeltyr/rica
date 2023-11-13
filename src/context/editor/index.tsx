@@ -4,7 +4,7 @@ import { Editor } from '@/interface/editor';
 import React, { useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { getContent, setupChildren, setupContents, setupRoot } from '@/utils/editors/data';
-import { childIntegration } from '@/utils/editors/node';
+import { childIntegration } from '@/utils/render';
 
 const defaultEditorValue: Editor = {
     id: v4(),

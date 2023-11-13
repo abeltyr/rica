@@ -1,6 +1,7 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { contents } from './data';
-import { childIntegration } from '@/utils/editors/node';
+import { childIntegration } from '@/utils/render';
+import { subClassName } from '@/utils/commons';
 
 
 export const upsetContent = ({ id, value, setupNode = false }: { id: string, value: EditorStateContentType, setupNode?: boolean }) => {
@@ -21,15 +22,27 @@ export const upsetContent = ({ id, value, setupNode = false }: { id: string, val
 }
 
 export const updateValueContent = async ({ id, value }: { id: string, value: string }) => {
-    if (contents[id]) {
-        contents[id].content = value;
-        contents[id].children = undefined;
-        const contentChild = document.getElementById(id);
-        if (contentChild)
-            contentChild.textContent = value;
-    } else {
-        alert("This id doesn't exist")
+
+    let newId = id;
+
+    if (!newId) {
+        alert("id doesn't exist")
+        return
     }
+
+    if (id.includes(subClassName)) newId = id.replace(subClassName, "")
+
+    if (!contents[newId]) {
+        alert("content doesn't exist")
+        return
+    }
+
+    contents[newId].content = value;
+    contents[newId].children = undefined;
+    const contentChild = document.getElementById(id);
+    if (contentChild)
+        contentChild.textContent = value;
+
 }
 
 export const updateParentContent = async ({ id, parentId }: { id: string, parentId: string }) => {

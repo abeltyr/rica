@@ -3,7 +3,7 @@
 import { useEditor } from '@/context/editor'
 import { updateCaretToMatch } from '@/utils/actions';
 import { stateCheck } from '@/utils/actions/stateCheck';
-import { getContent, updateValueContent } from '@/utils/editors/data';
+import { updateValueContent } from '@/utils/editors/data';
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
 import React, { useEffect } from 'react'
 
@@ -58,6 +58,7 @@ const Editor = () => {
             }}
 
             onKeyDown={async (event: React.KeyboardEvent<HTMLDivElement>) => {
+                console.log("on keyDown", event.key, event.code)
                 event.preventDefault();
 
                 // call the function getSelect to get the node and the current selection 
@@ -89,9 +90,6 @@ const Editor = () => {
                     let firstValueData = node.textContent.slice(0, currentPosition);
                     let secondValueData = node.textContent.slice(currentPosition, node.textContent.length);
 
-                    console.log("firstValueData", firstValueData)
-                    console.log("secondValueData", secondValueData)
-                    console.log("event.key", event.key)
 
                     updateValueContent({ id, value: firstValueData + event.key + secondValueData })
 
@@ -176,7 +174,7 @@ const Editor = () => {
             }}
 
             onKeyUp={(event) => {
-                console.log(event.key)
+                console.log("on keyUp", event.key, event.code)
                 if (event.key === "Shift") {
                     /**
                      * save the key Shift has been released and is being for the shortcut

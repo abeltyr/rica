@@ -2,7 +2,7 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { v4 } from 'uuid';
 import { updateCaretToMatch } from './cursor';
-import { spanChild } from '../editors/node';
+import { spanChild } from '@/utils/render';
 
 export const stateCheck = async (
     {
