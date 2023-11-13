@@ -1,6 +1,6 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { contents } from './data';
-import { childIntegration } from '@/utils/render';
+import { spanChild } from '@/utils/render';
 import { subClassName } from '@/utils/commons';
 
 
@@ -13,7 +13,7 @@ export const upsetContent = ({ id, value, setupNode = false }: { id: string, val
                 contentChild.textContent = value.content ?? "";
         }
         else {
-            contentChild = childIntegration({ editorStateData: value });
+            contentChild = spanChild({ editorStateData: value })
         }
     }
 
@@ -26,14 +26,14 @@ export const updateValueContent = async ({ id, value }: { id: string, value: str
     let newId = id;
 
     if (!newId) {
-        alert("id doesn't exist")
+        console.log("id doesn't exist")
         return
     }
 
     if (id.includes(subClassName)) newId = id.replace(subClassName, "")
 
     if (!contents[newId]) {
-        alert("content doesn't exist")
+        console.log("content doesn't exist")
         return
     }
 

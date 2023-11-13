@@ -74,7 +74,7 @@ const defaultEditorValue: Editor = {
                 type: "P",
                 className: "",
                 direction: "ltr",
-                indent: 10,
+                indent: 50,
                 children: "2",
                 format: "Start"
             },

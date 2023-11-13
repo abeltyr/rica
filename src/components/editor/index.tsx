@@ -1,14 +1,13 @@
 'use client'
 
 import { useEditor } from '@/context/editor'
-import { updateCaretToMatch } from '@/utils/actions';
-import { stateCheck } from '@/utils/actions/stateCheck';
+import { caretIndexFinder, updateCaretToMatch } from '@/utils/actions';
+import { stateCheck } from '@/utils/actions';
 import { updateValueContent } from '@/utils/editors/data';
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
 import React, { useEffect } from 'react'
 
 const Editor = () => {
-
     const { editorValue, renderEditorDom, setEditorValue } = useEditor();
     useEffect(() => {
         renderEditorDom();
@@ -27,18 +26,29 @@ const Editor = () => {
             }}
             onInput={() => {
                 // call the function getSelect to get the node and the current selection 
-
-                // using the node fetch the id, current position
-
-                /** 
-                 * based on the current data loop through the node and fix any 
-                 * new data that is added in the node and then the json
-                */
-
                 let { selection, node } = getCurrentlyEditedElement()
 
-                console.log("onInput node", node)
-                if (node && node.firstChild && selection) {
+
+                if (node && selection) {
+
+                    console.log("onInput node", node, id, currentPosition)
+
+                    // TODO: setup case for node with no id or has no children in them
+
+                    // if (!node.firstChild) {
+                    //     updateValueContent({
+                    //         id: id,
+                    //         value: ""
+                    //     });
+                    //     return
+                    // }
+
+                    // check if the current node match with 
+                    console.log(node.id, id, "id")
+
+
+
+                    // TODO: check what happens here after the is being runed on the keydown and re-runed here
                     if (node.firstChild.nodeType === 3) {
                         updateValueContent({
                             id: id,
@@ -46,29 +56,47 @@ const Editor = () => {
                         });
                     }
                     else {
-                        stateCheck({ node })
-                        // const parentContent = getContent({ id: node.id })
-                        // if (!parentContent.parentId) {
-                        //     ////TODO: May need a future check
-                        // }
+                        /** 
+                         * based on the current data loop through the node and fix any 
+                         * new data that is added in the node and then the json
+                        */
+                        // stateCheck({ node })
+                        // run the htmlConvertor to update the content and json to match with the json
                     }
-                    // add data match with the json
                 }
-
             }}
 
             onKeyDown={async (event: React.KeyboardEvent<HTMLDivElement>) => {
                 console.log("on keyDown", event.key, event.code)
-                event.preventDefault();
+
+                let skipPrevention = true;
+                if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                    return
+                }
 
                 // call the function getSelect to get the node and the current selection 
-                const { selection, node } = getCurrentlyEditedElement();
+                let editorData = getCurrentlyEditedElement();
 
+                let node = editorData.node;
+                let selection = editorData.selection;
+                id = node.id;
+                currentPosition = selection!.focusOffset;
                 // using the node fetch the id, current position
 
-                let id = node.id;
+                console.log("children", node.children, currentPosition, id)
 
-                let currentPosition = selection!.focusOffset;
+                if (node.children.length > 0) {
+                    const index = caretIndexFinder({ node });
+                    console.log("clean up node",)
+                    await stateCheck({ node })
+                    if (index > 0) {
+                        let editorData = node.children[index];
+                        node = editorData;
+                        id = editorData.id;
+                    }
+                }
+
+                // if the id is null run a state check and html converter, and  based on that add the pressed key a
 
                 /**
                  * call the getTextSelection to fetch the selected text in a form of an array
@@ -89,12 +117,8 @@ const Editor = () => {
                      * */
                     let firstValueData = node.textContent.slice(0, currentPosition);
                     let secondValueData = node.textContent.slice(currentPosition, node.textContent.length);
-
-
                     updateValueContent({ id, value: firstValueData + event.key + secondValueData })
-
                     currentPosition++;
-
                     /**
                      * setup the carter position based on the current one by adding one to it 
                      * then call the update function using the id and the currentPosition
@@ -116,6 +140,43 @@ const Editor = () => {
                      * */
 
 
+                    if (node.textContent.length === 1) {
+                        console.log("last")
+                        console.log("parent", node.parentElement)
+                    } else {
+                        let firstValueData = node.textContent.substring(0, currentPosition - 1);
+                        let secondValueData = node.textContent.substring(currentPosition);
+                        updateValueContent({ id, value: firstValueData + secondValueData })
+                        updateCaretToMatch({ id, currentPosition: Math.min(currentPosition - 1, node.textContent.length), selection: selection! })
+                    }
+
+
+                    //TODO: need to figure out which come first this or the above                    
+                    if (event.key === "Backspace" || currentPosition === 0) {
+                        console.log("on the first")
+
+                        // if the id is at the first of the root the root will need to remove the current one and move it to the root above it
+                        // need it check if the root is at the first of the root list
+
+
+                        // if the id is at the first of the content inside a child the children will need to remove the current content and move it to the content before it
+                        // need it check if the content is at the first of the children list
+                    }
+
+
+                    if (event.key === "Delete" || currentPosition === node.textContent.length) {
+                        console.log("on the last")
+
+                        // if the id is at the last of the root the root will need to remove the current one and move it to the root above it
+                        // need it check if the root is at the last of the root list
+
+
+                        // if the id is at the last of the content inside a child the children will need to remove the current content and move it to the content before it
+                        // need it check if the content is at the last of the children list
+                    }
+
+
+
                     /**
                      * setup the carter position based on the current one by keeping it or moving it back one left
                      * by subtracting to it by one then call the update function using the id and the currentPosition
@@ -125,6 +186,7 @@ const Editor = () => {
                      * if the deleted value is the last of the content 
                      */
                 }
+
 
 
                 if (event.key === "Tap") {
@@ -171,10 +233,13 @@ const Editor = () => {
                      * */
                 }
 
+                if (skipPrevention)
+                    event.preventDefault();
+
             }}
 
             onKeyUp={(event) => {
-                console.log("on keyUp", event.key, event.code)
+                // console.log("on keyUp", event.key, event.code)
                 if (event.key === "Shift") {
                     /**
                      * save the key Shift has been released and is being for the shortcut
@@ -233,3 +298,21 @@ const Editor = () => {
 }
 
 export default Editor
+
+
+
+{/* sadda
+<p id="20" key="20" className="leading-7 outline-none cursor-text text-start ">
+    <span id="30" key="30">Welcome </span> dasadssajk
+    <a id="40" key="40" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+        <span id="50" key="50" className="font-bold text-red-300 italic no-underline"> To </span>
+        <span id="60" key="60">Link </span>
+    </a>
+    saads asd
+    <span id="70" key="70"> Pp Data </span>
+    jknkj k
+    <a id="80" key="80" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+        <span id="90" key="90" className="font-bold italic"> To </span>
+        <span id="100" key="100">Link</span>
+    </a>
+</p> */}
