@@ -45,8 +45,45 @@ export const updateValueContent = async ({ id, value }: { id: string, value: str
 
 }
 
-export const updateParentContent = async ({ id, parentId }: { id: string, parentId: string }) => {
-    if (contents[id]) {
-        contents[id].parentId = parentId;
+export const updateParentContent = async ({ id, parentId }: { id: string, parentId: string | undefined }) => {
+    //TODO: need optimization for this repeated code call
+    let newId = id;
+
+    if (!newId) {
+        console.log("id doesn't exist")
+        return
+    }
+
+    if (id.includes(subClassName)) newId = id.replace(subClassName, "")
+
+    if (!contents[newId]) {
+        console.log("content doesn't exist")
+        return
+    }
+
+
+    if (contents[newId]) {
+        contents[newId].parentId = parentId;
     }
 }
+
+
+export const updateContentChildren = async ({ id, childrenId }: { id: string, childrenId: string }) => {
+    let newId = id;
+
+    if (!newId) {
+        console.log("id doesn't exist")
+        return
+    }
+
+    if (id.includes(subClassName)) newId = id.replace(subClassName, "")
+
+    if (!contents[newId]) {
+        console.log("content doesn't exist")
+        return
+    }
+    if (contents[newId]) {
+        contents[newId].children = childrenId;
+    }
+}
+

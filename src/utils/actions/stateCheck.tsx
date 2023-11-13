@@ -10,6 +10,12 @@ export const stateCheck = async (
         node: Node,
     }
 ) => {
+    let parentId: string | undefined;
+    if (node instanceof Element) {
+        parentId = node.id;
+    }
+
+    if (!parentId) return
 
     for (let i = 0; i < node.childNodes.length; i++) {
         if (node.childNodes[i].nodeType === 3) {
@@ -21,7 +27,8 @@ export const stateCheck = async (
                     className: "",
                     direction: "",
                     indent: 0,
-                    content: initialData
+                    content: initialData,
+                    parentId: parentId != "Editor" ? parentId : undefined
                 }
                 const newChild = upsetContent({ id: value.id, value, setupNode: true });
                 if (newChild) node.childNodes[i].replaceWith(newChild)

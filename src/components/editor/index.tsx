@@ -3,6 +3,7 @@
 import { useEditor } from '@/context/editor'
 import { caretIndexFinder, updateCaretToMatch } from '@/utils/actions';
 import { stateCheck } from '@/utils/actions';
+import { htmlConvertor } from '@/utils/actions/htmlConvertor';
 import { updateValueContent } from '@/utils/editors/data';
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
 import React, { useEffect } from 'react'
@@ -89,6 +90,7 @@ const Editor = () => {
                     const index = caretIndexFinder({ node });
                     console.log("clean up node",)
                     await stateCheck({ node })
+                    await htmlConvertor({ node })
                     if (index > 0) {
                         let editorData = node.children[index];
                         node = editorData;
@@ -302,17 +304,17 @@ export default Editor
 
 
 {/* sadda
-<p id="20" key="20" className="leading-7 outline-none cursor-text text-start ">
-    <span id="30" key="30">Welcome </span> dasadssajk
-    <a id="40" key="40" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
-        <span id="50" key="50" className="font-bold text-red-300 italic no-underline"> To </span>
-        <span id="60" key="60">Link </span>
-    </a>
-    saads asd
-    <span id="70" key="70"> Pp Data </span>
-    jknkj k
-    <a id="80" key="80" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
-        <span id="90" key="90" className="font-bold italic"> To </span>
-        <span id="100" key="100">Link</span>
-    </a>
-</p> */}
+            <p id="20" key="20" className="leading-7 outline-none cursor-text text-start ">
+                <span id="30" key="30">Welcome </span> dasadssajk
+                <a id="40" key="40" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+                    <span id="50" key="50" className="font-bold text-red-300 italic no-underline"> To </span>
+                    <span id="60" key="60">Link </span>
+                </a>
+                saads asd
+                <span id="70" key="70"> Pp Data </span>
+                jknkj k
+                <a id="80" key="80" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+                    <span id="90" key="90" className="font-bold italic"> To </span>
+                    <span id="100" key="100">Link</span>
+                </a>
+            </p> */}
