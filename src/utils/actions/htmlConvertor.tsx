@@ -1,7 +1,9 @@
 
 import { ValueType } from '@/interface/editor';
 import { v4 } from 'uuid';
-import { updateContentChildren, updateParentContent, updateValueContent, upsetChildren } from '@/utils/editors/data';
+import { updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent } from '@/utils/editors/data';
+import { parentClass } from '../commons';
+import { elementConvertor } from '@/utils/actions';
 
 export const htmlConvertor = async (
     { node, }: { node: Node, }
@@ -25,7 +27,7 @@ export const htmlConvertor = async (
         if (mainParent) mainParentId = mainParent.id
 
 
-        if (!mainParentId || mainParentId === "Editor")
+        if (!mainParentId || mainParentId === parentClass)
             updateParentContent({ id: parentId, parentId: undefined })
         else
             updateParentContent({ id: parentId, parentId: mainParentId })
@@ -49,7 +51,7 @@ export const htmlConvertor = async (
                         parentId
                     }]
                     updateContentChildren({ id: childContentId, childrenId: childContentId })
-                    if (!parentId || parentId === "Editor")
+                    if (!parentId || parentId === parentClass)
                         updateParentContent({ id: childContentId, parentId: undefined })
                     else
                         updateParentContent({ id: childContentId, parentId: parentId })
@@ -82,10 +84,12 @@ const nodeConvertor = (
         if (!contentId) {
             contentId = v4();
             if (childNode instanceof Element) {
-                childNode.id = contentId;
-                childNode.setAttribute("key", contentId);
+                const value = elementConvertor(childNode)
+                if (value) {
+                    upsetContent({ id: value.id, value, })
+                    contentId = value.id;
+                }
             }
-            // TODO:setup a way to convert html component to content
         }
 
         return {

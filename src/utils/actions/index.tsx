@@ -1,3 +1,5 @@
 export * from "./cursor"
 export * from "./carterIndexFinder"
-export * from "./stateCheck"
+export * from "./stateAdjuster"
+export * from "./elementConvertor"
+export * from "./htmlConvertor"

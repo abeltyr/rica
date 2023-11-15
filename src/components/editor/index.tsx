@@ -1,15 +1,16 @@
 'use client'
 
 import { useEditor } from '@/context/editor'
-import { caretIndexFinder, updateCaretToMatch } from '@/utils/actions';
-import { stateCheck } from '@/utils/actions';
+import { caretIndexFinder, elementConvertor, updateCaretToMatch } from '@/utils/actions';
+import { stateAdjuster } from '@/utils/actions';
 import { htmlConvertor } from '@/utils/actions/htmlConvertor';
-import { updateValueContent } from '@/utils/editors/data';
+import { parentClass } from '@/utils/commons';
+import { getAllChildren, getChildren, getContents, updateValueContent, upsetContent } from '@/utils/editors/data';
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
 import React, { useEffect } from 'react'
 
 const Editor = () => {
-    const { editorValue, renderEditorDom, setEditorValue } = useEditor();
+    const { renderEditorDom } = useEditor();
     useEffect(() => {
         renderEditorDom();
     })
@@ -20,51 +21,45 @@ const Editor = () => {
     return (
         <div
             className={`w-full py-2 px-4 outline-none cursor-text block whitespace-pre-wrap break-words select-text border-2 rounded-xl`}
-            id="Editor"
+            id={parentClass}
             contentEditable={true}
             onDragStart={(event: any) => {
                 event.preventDefault();
             }}
-            onInput={() => {
+            onInput={async () => {
                 // call the function getSelect to get the node and the current selection 
-                let { selection, node } = getCurrentlyEditedElement()
-
+                let editorData = getCurrentlyEditedElement();
+                let node = editorData.node;
+                let selection = editorData.selection;
 
                 if (node && selection) {
+                    // using the node fetch the id, current position
+                    id = node.id;
+                    currentPosition = selection!.focusOffset;
+                    console.log("onInput node", node, id, currentPosition, node.children)
 
-                    console.log("onInput node", node, id, currentPosition)
-
-                    // TODO: setup case for node with no id or has no children in them
-
-                    // if (!node.firstChild) {
-                    //     updateValueContent({
-                    //         id: id,
-                    //         value: ""
-                    //     });
-                    //     return
-                    // }
-
-                    // check if the current node match with 
-                    console.log(node.id, id, "id")
-
-
-
-                    // TODO: check what happens here after the is being runed on the keydown and re-runed here
-                    if (node.firstChild.nodeType === 3) {
+                    if (node.children.length > 0) {
+                        console.info("html need cleaning up",)
+                        const index = caretIndexFinder({ node });
+                        await stateAdjuster({ node })
+                        await htmlConvertor({ node })
+                        if (index > 0) {
+                            let editorData = node.children[index];
+                            node = editorData;
+                            id = editorData.id;
+                        }
+                    } else if (node.children.length === 1 && node.firstChild.nodeType === 3) {
                         updateValueContent({
                             id: id,
                             value: node.textContent
                         });
-                    }
-                    else {
-                        /** 
-                         * based on the current data loop through the node and fix any 
-                         * new data that is added in the node and then the json
-                        */
-                        // stateCheck({ node })
-                        // run the htmlConvertor to update the content and json to match with the json
+                        console.info("html just updated",)
                     }
                 }
+
+                console.log("contents", getContents())
+                console.log("children", getAllChildren())
+                console.log("children", getChildren({ parentId: parentClass }))
             }}
 
             onKeyDown={async (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -88,8 +83,8 @@ const Editor = () => {
 
                 if (node.children.length > 0) {
                     const index = caretIndexFinder({ node });
-                    console.log("clean up node",)
-                    await stateCheck({ node })
+                    console.info("html need cleaning up",)
+                    await stateAdjuster({ node })
                     await htmlConvertor({ node })
                     if (index > 0) {
                         let editorData = node.children[index];
@@ -98,12 +93,9 @@ const Editor = () => {
                     }
                 }
 
-                // if the id is null run a state check and html converter, and  based on that add the pressed key a
-
                 /**
                  * call the getTextSelection to fetch the selected text in a form of an array
                  */
-
 
                 // setup an if to check when there is text selection here
 
@@ -113,6 +105,7 @@ const Editor = () => {
 
 
                 if (event.key.length === 1) {
+
                     /**
                      * Here goes the function to add the added key value to the appropriate json
                      * and update the node accordingly
@@ -121,6 +114,8 @@ const Editor = () => {
                     let secondValueData = node.textContent.slice(currentPosition, node.textContent.length);
                     updateValueContent({ id, value: firstValueData + event.key + secondValueData })
                     currentPosition++;
+
+
                     /**
                      * setup the carter position based on the current one by adding one to it 
                      * then call the update function using the id and the currentPosition
@@ -305,7 +300,7 @@ export default Editor
 
 {/* sadda
             <p id="20" key="20" className="leading-7 outline-none cursor-text text-start ">
-                <span id="30" key="30">Welcome </span> dasadssajk
+                <span id="30" key="30">Welcome </span> sadda das hajs adssajk
                 <a id="40" key="40" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
                     <span id="50" key="50" className="font-bold text-red-300 italic no-underline"> To </span>
                     <span id="60" key="60">Link </span>

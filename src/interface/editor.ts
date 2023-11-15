@@ -13,13 +13,10 @@ export type ValueType = {
 };
 
 export type EditorState = {
-  root: EditorRootType;
   children: EditorChildrenType;
   content: EditorContentType;
   rule: EditorStateRule;
 };
-
-export type EditorRootType = string[];
 
 export type EditorChildrenType = {
   [parentId: string]: ValueType[];
@@ -40,17 +37,18 @@ export type EditorStateContentType = {
   indent: number | 0;
   direction: string;
   disabled?: boolean;
-  additional?: {
-    link?: EditorLinkAttrs;
-    assets?: EditorAssetsAttrs;
-    ytVideo?: EditorYoutubeVideoAttrs;
-  };
+  additional?: EditorAdditionDataType;
   parentId?: string;
 };
 
 export type EditorStateRule = {
   maxChildrenAmount: number | null;
   availableFeature: string[];
+};
+export type EditorAdditionDataType = {
+  link?: EditorLinkAttrs;
+  assets?: EditorAssetsAttrs;
+  ytVideo?: EditorYoutubeVideoAttrs;
 };
 
 export type EditorLinkAttrs = {

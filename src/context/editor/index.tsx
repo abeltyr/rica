@@ -3,13 +3,25 @@
 import { Editor } from '@/interface/editor';
 import React, { useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { getContent, setupChildren, setupContents, setupRoot } from '@/utils/editors/data';
+import { getChildren, getContent, setupChildren, setupContents } from '@/utils/editors/data';
 import { childIntegration } from '@/utils/render';
+import { parentClass } from '@/utils/commons';
 
 const defaultEditorValue: Editor = {
     id: v4(),
     editorState: {
         children: {
+            "Editor": [
+                {
+                    contentId: "0",
+                },
+                {
+                    contentId: "1",
+                },
+                {
+                    contentId: "2",
+                }
+            ],
             "2": [
                 {
                     contentId: "3",
@@ -170,11 +182,6 @@ const defaultEditorValue: Editor = {
                 parentId: "8",
             },
         },
-        root: [
-            "0",
-            "1",
-            "2"
-        ],
         rule: {
             availableFeature: [],
             maxChildrenAmount: null
@@ -211,27 +218,30 @@ const EditorProvider: React.FC<Props> = ({ children }) => {
     useEffect(() => {
         setupContents(editorValue.editorState.content);
         setupChildren(editorValue.editorState.children);
-        setupRoot(editorValue.editorState.root)
     })
 
 
     const renderEditorDom = () => {
-        const rootEditorElement = document.getElementById('Editor');
+        const rootEditorElement = document.getElementById(parentClass);
         let count = 0
-        editorValue.editorState.root.map((value, index) => {
-            const editableState = getContent({ id: value });
-            if (editableState) {
-                const parentElement = childIntegration({
-                    editorStateData: editableState,
-                })
-                if (rootEditorElement?.children[count] == null) {
-                    rootEditorElement?.appendChild(parentElement)
-                } else {
-                    rootEditorElement?.replaceChild(parentElement, rootEditorElement.children[count])
+        console.log(editorValue.editorState.children, parentClass);
+        const children = getChildren({ parentId: parentClass })
+        if (children) {
+            children.map((value, index) => {
+                const editableState = getContent({ id: value.contentId });
+                if (editableState) {
+                    const parentElement = childIntegration({
+                        editorStateData: editableState,
+                    })
+                    if (rootEditorElement?.children[count] == null) {
+                        rootEditorElement?.appendChild(parentElement)
+                    } else {
+                        rootEditorElement?.replaceChild(parentElement, rootEditorElement.children[count])
+                    }
+                    count++;
                 }
-                count++;
-            }
-        })
+            })
+        }
     }
 
     return (
