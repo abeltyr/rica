@@ -16,28 +16,28 @@ const defaultEditorValue: Editor = {
                     contentId: "0",
                 },
                 {
-                    contentId: "1",
+                    contentId: "100",
                 },
                 {
-                    contentId: "2",
+                    contentId: "20",
                 }
             ],
-            "2": [
+            "20": [
                 {
                     contentId: "3",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "4",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "7",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "8",
-                    parentId: "2",
+                    parentId: "20",
                 }
             ],
             "4": [
@@ -71,8 +71,8 @@ const defaultEditorValue: Editor = {
                 content: "Poland",
                 format: null
             },
-            "1": {
-                id: "1",
+            "100": {
+                id: "100",
                 type: "P",
                 className: "",
                 direction: "ltr",
@@ -81,13 +81,13 @@ const defaultEditorValue: Editor = {
                 format: null,
 
             },
-            "2": {
-                id: "2",
+            "20": {
+                id: "20",
                 type: "P",
                 className: "",
                 direction: "ltr",
                 indent: 50,
-                children: "2",
+                children: "20",
                 format: "Start"
             },
             "3": {
@@ -98,7 +98,7 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 content: "Welcome ",
                 format: null,
-                parentId: "2"
+                parentId: "20"
             },
             "4": {
                 id: "4",
@@ -108,7 +108,7 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 children: "4",
                 format: null,
-                parentId: "2",
+                parentId: "20",
                 additional: {
                     link: {
                         href: "https://google.com",
@@ -143,7 +143,7 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 content: " Pp Data ",
                 format: null,
-                parentId: "2",
+                parentId: "20",
             },
             "8":
             {
@@ -158,7 +158,7 @@ const defaultEditorValue: Editor = {
                         href: "https://google.com",
                     }
                 },
-                parentId: "2",
+                parentId: "20",
 
             },
             "9": {

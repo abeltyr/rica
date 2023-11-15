@@ -87,3 +87,11 @@ export const updateContentChildren = async ({ id, childrenId }: { id: string, ch
     }
 }
 
+
+export const validateId = (id: string) => {
+    let newId = id;
+
+    if (id.includes(subClassName)) newId = id.replace(subClassName, "")
+
+    return newId
+}
