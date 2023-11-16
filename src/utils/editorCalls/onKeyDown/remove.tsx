@@ -1,9 +1,25 @@
 import { EditorStateContentType, ValueType } from '@/interface/editor';
-import { elementConvertor } from '@/utils/actions';
+import { elementConvertor, updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getAllChildren, getChildren, getContent, getContents, getRootParent, updateContentChildren, updateValueContent, upsetChildren, upsetContent, validateId } from '@/utils/editors/data';
+import { getAllChildren, getChildren, getContent, getContents, getRootParent, removeChildren, removeChildrenContent, removeChildrenData, removeContent, updateChildrenValue, updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent, validateId } from '@/utils/editors/data';
+import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 
+
+
+const fetchLastChild = (value: EditorStateContentType): EditorStateContentType | undefined => {
+
+    let id: EditorStateContentType | undefined;
+    if (value.content != undefined) {
+        id = value
+    } else if (value.children) {
+        const children = getChildren({ parentId: value.children });
+        const content = getContent({ id: children[children.length - 1].contentId });
+        id = fetchLastChild(content);
+    }
+
+    return id
+}
 
 
 export const remove = (
@@ -27,109 +43,216 @@ export const remove = (
     const textValue = node.textContent ?? "";
 
 
-
-    //TODO: need to figure out which come first this or the above                    
     if (key === "Backspace" && currentPosition === 0) {
-
-        // const content = getContent({ id })
-        // let childIndex;
 
         const rootIndex = getRootParent(contentId);
         console.log("firstAtRoot", rootIndex)
+
+        console.log("getContents", getContents())
+        console.log("getAllChildren", getAllChildren())
+
         if (rootIndex && rootIndex > 0) {
             let previousIndex = rootIndex - 1;
             const root = getChildren({ parentId: parentClass });
 
-            console.log("root", root,)
-            console.log("previousIndex", root[previousIndex].contentId,)
 
             const previousId = root[previousIndex].contentId
             const currentId = root[rootIndex].contentId
 
-            console.log("previousId", previousId,)
-            console.log("currentId", currentId)
+            const beforeContent = { ...getContent({ id: previousId }) };
+            const currentContent = { ...getContent({ id: currentId }) };
 
-            const previousContent = getContent({ id: previousId });
-            const currentContent = getContent({ id: currentId });
-
-            console.log("previousContent", previousContent)
-            console.log("currentContent", currentContent)
-
-            const previousChildren = getChildren({ parentId: previousId });
-            const currentChildren = getChildren({ parentId: currentId });
-
-            console.log("previousChildren", previousChildren, previousIndex, rootIndex)
-            console.log("currentChildren", currentChildren)
             let newChildren: ValueType[] = [];
 
 
-            if (previousContent.children) {
-                if (currentContent.children) {
-                    newChildren = [...previousChildren, ...currentChildren]
-                    const previousNode = document.getElementById(previousContent.id)
+            if (beforeContent.children && currentContent.children) {
+                let beforeChildren = [...getChildren({ parentId: previousId })];
+                let currentChildren = [...getChildren({ parentId: currentId })];
+
+                newChildren = [...beforeChildren, ...currentChildren]
+                upsetChildren({ value: newChildren, parentId: beforeContent.id })
+                upsetChildren({ value: [], parentId: currentContent.id })
+                removeChildren({ parentId: currentContent.id })
+                removeChildrenContent({ parentId: parentClass, contentId: currentContent.id })
+
+                const previousNode = document.getElementById(beforeContent.id)
+                const currentNode = document.getElementById(currentContent.id)
+                const content = getContent({ id: beforeContent.id });
+                const newChild = childIntegration({ editorStateData: content })
+                if (previousNode) previousNode.replaceWith(newChild);
+                if (currentNode) currentNode.remove();
+                updateCaretToMatch({ id, currentPosition, selection: selection! })
+            }
+            else if (beforeContent.children && currentContent.content != undefined) {
+                let beforeChildren = [...getChildren({ parentId: previousId })];
+                if (currentContent.content) {
+                    const previousNode = document.getElementById(beforeContent.id)
                     const currentNode = document.getElementById(currentContent.id)
-                    if (currentNode && previousNode)
-                        previousNode.append(currentNode)
 
-                    upsetChildren({ value: newChildren, parentId: previousContent.id })
+                    // update the currentContent id
+                    const newContent = {
+                        ...currentContent,
+                        id: v4(),
+                        parentId: currentContent.id,
+                    }
+                    newContent.type = "P"
 
-                } else if (currentContent.content) {
 
+                    newChildren = [...beforeChildren, {
+                        contentId: newContent.id,
+                        parentId: beforeContent.id
+                    }]
+
+                    upsetChildren({ value: newChildren, parentId: beforeContent.id })
+                    upsetContent({ id: newContent.id, value: newContent })
+                    removeChildrenContent({ parentId: parentClass, contentId: currentId })
+
+                    const content = getContent({ id: beforeContent.id });
+                    const newChild = childIntegration({ editorStateData: content })
+                    if (previousNode)
+                        previousNode.replaceWith(newChild);
+                    if (currentNode) currentNode.remove()
+
+                    updateCaretToMatch({ id: newContent.id, currentPosition: 0, selection: selection! })
                 }
-
-
+                else if (currentContent.content === "") {
+                    removeChildrenContent({ parentId: parentClass, contentId: currentContent.id })
+                    const currentNode = document.getElementById(currentContent.id)
+                    if (currentNode) currentNode.remove();
+                    const lastContent = fetchLastChild(beforeContent)
+                    if (lastContent)
+                        updateCaretToMatch({ id: lastContent.id, currentPosition: -1, selection: selection! })
+                }
             }
-            else if (previousContent.content != undefined) {
-                if (currentContent.children) {
-                    const previousNode = document.getElementById(previousContent.id)
+            else if (beforeContent.content != undefined && currentContent.children) {
+                let currentChildren = [...getChildren({ parentId: currentId })];
+                if (beforeContent.content) {
 
-                    const id = v4();
-                    let currentContentData: EditorStateContentType | undefined | null;
+                    const previousNode = document.getElementById(beforeContent.id)
+                    const currentNode = document.getElementById(currentId)
 
-                    if (previousNode instanceof Element) {
-                        if (previousNode.firstChild instanceof Element) {
-                            currentContentData = elementConvertor(previousNode.firstChild);
+                    const newContent = {
+                        ...beforeContent,
+                        id: v4(),
+                        parentId: beforeContent.id,
+                    }
+                    newContent.type = "P"
+
+                    console.log("newContent", newContent)
+
+
+                    newChildren = [
+                        {
+                            contentId: newContent.id,
+                            parentId: beforeContent.id
                         }
-                    }
-                    if (currentContentData && currentContentData.content) {
-                        currentContentData.id = id;
-                        newChildren = [
-                            {
-                                contentId: currentContentData.id,
-                            },
-                            ...currentChildren
-                        ]
-                        upsetContent({ id: currentContentData?.id, value: currentContentData })
-                    } else {
-                        newChildren = [
-                            ...currentChildren
-                        ]
+                    ]
 
-                    }
-
-                    upsetChildren({ value: newChildren, parentId: previousContent.id })
-                    updateContentChildren({ childrenId: previousContent.id, id: previousContent.id })
+                    currentChildren.forEach((value, index) => {
+                        newChildren =
+                            [
+                                ...newChildren,
+                                {
+                                    contentId: value.contentId,
+                                    parentId: beforeContent.id
+                                }
+                            ]
+                    })
 
 
-                    // const currentNode = document.getElementById(currentContent.id)
-                    // // if (currentNode && previousNode)
-                    // //     previousNode.append(currentNode)
+                    upsetContent({ id: newContent.id, value: newContent })
+                    updateParentContent({ id: currentId, parentId: beforeContent.id, })
+                    upsetChildren({ value: newChildren, parentId: beforeContent.id })
+                    updateContentChildren({ childrenId: beforeContent.id, id: beforeContent.id })
+                    removeChildrenData({ parentId: parentClass, contentId: currentId })
+                    upsetChildren({ parentId: currentId, value: [] })
+                    removeChildren({ parentId: currentId })
 
+                    const content = getContent({ id: beforeContent.id });
 
+                    const newChild = childIntegration({ editorStateData: content })
+                    if (previousNode)
+                        previousNode.replaceWith(newChild);
+                    if (currentNode) currentNode.remove()
 
-                    console.log("newChildren", newChildren,)
-                    console.log("getContent", getContents(),)
-                    console.log("getAllChildren", getAllChildren(),)
+                    updateCaretToMatch({ id: id, currentPosition: 0, selection: selection! })
 
-
-
-
-                } else if (currentContent.content) {
-
-
+                }
+                else if (beforeContent.content === "") {
+                    const currentNode = document.getElementById(beforeContent.id)
+                    if (currentNode) currentNode.remove()
+                    removeChildrenContent({ parentId: parentClass, contentId: beforeContent.id })
                 }
 
             }
+
+            else if (beforeContent.content != undefined && currentContent.content != undefined) {
+                if (beforeContent.content && currentContent.content) {
+                    const previousNode = document.getElementById(beforeContent.id)
+                    const currentNode = document.getElementById(currentId)
+
+                    const newBeforeContent = {
+                        ...beforeContent,
+                        id: v4(),
+                        parentId: beforeContent.id,
+                    }
+
+                    const newContent = {
+                        ...currentContent,
+                        id: v4(),
+                        parentId: beforeContent.id,
+                    }
+
+                    newBeforeContent.type = "P"
+                    newContent.type = "P"
+
+
+                    newChildren = [
+                        {
+                            contentId: newBeforeContent.id,
+                            parentId: beforeContent.id
+                        },
+                        {
+                            contentId: newContent.id,
+                            parentId: beforeContent.id
+                        }
+                    ];
+
+
+                    upsetContent({ id: newContent.id, value: newContent })
+                    upsetContent({ id: newBeforeContent.id, value: newBeforeContent })
+
+                    upsetChildren({ value: newChildren, parentId: beforeContent.id })
+
+                    updateContentChildren({ childrenId: beforeContent.id, id: beforeContent.id })
+                    removeChildrenData({ parentId: parentClass, contentId: currentId })
+
+                    const content = getContent({ id: beforeContent.id });
+                    const newChild = childIntegration({ editorStateData: content })
+                    if (previousNode)
+                        previousNode.replaceWith(newChild);
+                    if (currentNode) currentNode.remove()
+
+                    updateCaretToMatch({ id: newContent.id, currentPosition: 0, selection: selection! })
+
+
+                }
+                if (currentContent.content === "") {
+                    const currentNode = document.getElementById(currentContent.id)
+                    if (currentNode) currentNode.remove()
+                    removeChildrenContent({ parentId: parentClass, contentId: currentContent.id })
+                    updateCaretToMatch({ id: beforeContent.id, currentPosition: -1, selection: selection! })
+
+                }
+                if (beforeContent.content === "" && currentContent.content != "") {
+                    const currentNode = document.getElementById(beforeContent.id)
+                    if (currentNode) currentNode.remove()
+                    removeChildrenContent({ parentId: parentClass, contentId: beforeContent.id })
+                }
+            }
+
+            console.log("getContents", getContents())
+            console.log("getAllChildren", getAllChildren())
 
         }
         return

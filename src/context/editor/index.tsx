@@ -16,7 +16,31 @@ const defaultEditorValue: Editor = {
                     contentId: "0",
                 },
                 {
+                    contentId: "12",
+                },
+                {
                     contentId: "100",
+                },
+                {
+                    contentId: "11",
+                },
+                {
+                    contentId: "14",
+                },
+                {
+                    contentId: "42",
+                },
+                {
+                    contentId: "15",
+                },
+                {
+                    contentId: "40",
+                },
+                {
+                    contentId: "13",
+                },
+                {
+                    contentId: "41",
                 },
                 {
                     contentId: "20",
@@ -48,6 +72,54 @@ const defaultEditorValue: Editor = {
                 {
                     contentId: "6",
                     parentId: "4",
+                },
+            ],
+            "40": [
+                {
+                    contentId: "50",
+                    parentId: "40",
+                },
+            ],
+            "41": [
+                {
+                    contentId: "51",
+                    parentId: "41",
+                },
+            ],
+            "42": [
+                {
+                    contentId: "52",
+                    parentId: "42",
+                },
+            ],
+            "50": [
+                {
+                    contentId: "60",
+                    parentId: "50",
+                },
+                {
+                    contentId: "70",
+                    parentId: "50",
+                },
+            ],
+            "51": [
+                {
+                    contentId: "61",
+                    parentId: "51",
+                },
+                {
+                    contentId: "71",
+                    parentId: "51",
+                },
+            ],
+            "52": [
+                {
+                    contentId: "62",
+                    parentId: "52",
+                },
+                {
+                    contentId: "72",
+                    parentId: "52",
                 },
             ],
             "8": [
@@ -115,6 +187,138 @@ const defaultEditorValue: Editor = {
                     }
                 },
             },
+            "40": {
+                id: "40",
+                type: "P",
+                className: "font-bold text-red-300 italic no-underline",
+                direction: "ltr",
+                indent: 0,
+                children: "40",
+                format: null,
+            },
+            "41": {
+                id: "41",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "41",
+                format: null,
+            },
+            "42": {
+                id: "42",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "42",
+                format: null,
+            },
+            "50": {
+                id: "50",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "50",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "40",
+            },
+            "51": {
+                id: "51",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "51",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "41",
+            },
+            "52": {
+                id: "52",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "52",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "42",
+            },
+            "60": {
+                id: "60",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "50",
+            },
+            "70": {
+                id: "70",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "50",
+            },
+            "61": {
+                id: "61",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "51",
+            },
+            "71": {
+                id: "71",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "51",
+            },
+            "62": {
+                id: "62",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "52",
+            },
+            "72": {
+                id: "72",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "52",
+            },
             "5": {
                 id: "5",
                 type: "P",
@@ -181,6 +385,51 @@ const defaultEditorValue: Editor = {
                 format: null,
                 parentId: "8",
             },
+            "11": {
+                id: "11",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
+            "12": {
+                id: "12",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "",
+                format: null,
+            },
+            "13": {
+                id: "13",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "",
+                format: null,
+            },
+            "14": {
+                id: "14",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
+            "15": {
+                id: "15",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
         },
         rule: {
             availableFeature: [],
@@ -224,7 +473,6 @@ const EditorProvider: React.FC<Props> = ({ children }) => {
     const renderEditorDom = () => {
         const rootEditorElement = document.getElementById(parentClass);
         let count = 0
-        console.log(editorValue.editorState.children, parentClass);
         const children = getChildren({ parentId: parentClass })
         if (children) {
             children.map((value, index) => {

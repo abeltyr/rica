@@ -10,10 +10,13 @@ export const removeChildren = ({ parentId }: { parentId: string }) => {
         removingChild.map((value, _) => {
             removeChildrenContent({ contentId: value.contentId, parentId });
         })
+        if (removingChild.length === 0) {
+            delete children[parentId];
+        }
     }
 }
 
-export const removeChildrenContent = async ({ parentId, contentId }: { parentId: string, contentId: string }) => {
+export const removeChildrenContent = async ({ parentId, contentId }: { parentId: string, contentId: string, }) => {
     const contentIndex = getChildrenIndex({ contentId, parentId })
     if (contentIndex >= 0) {
         children[parentId].splice(contentIndex, 1)
@@ -25,5 +28,12 @@ export const removeChildrenContent = async ({ parentId, contentId }: { parentId:
             }
         }
         removeContent({ id: contentId })
+    }
+}
+
+export const removeChildrenData = async ({ parentId, contentId }: { parentId: string, contentId: string, }) => {
+    const contentIndex = getChildrenIndex({ contentId, parentId })
+    if (contentIndex >= 0) {
+        children[parentId].splice(contentIndex, 1)
     }
 }

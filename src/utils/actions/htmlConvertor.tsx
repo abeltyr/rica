@@ -32,13 +32,13 @@ export const htmlConvertor = async (
         else
             updateParentContent({ id: parentId, parentId: mainParentId })
 
-        // removeChildren({ parentId })
         return parentId;
     }
 
     for (let i = 0; i < node.childNodes.length; i++) {
-        if (node.childNodes[i].nodeType === 1) {
-            if (node.childNodes[i]?.firstChild?.nodeType === 3) {
+        const nodeData = node.childNodes[i];
+        if (nodeData.nodeType === 1 && nodeData instanceof Element && nodeData.tagName != "BR") {
+            if (nodeData.firstChild?.nodeType === 3) {
                 const value = nodeConvertor({ node: node.childNodes[i], parentId });
                 if (value)
                     children = [...children, value]
@@ -56,10 +56,10 @@ export const htmlConvertor = async (
                     else
                         updateParentContent({ id: childContentId, parentId: parentId })
                 }
+
             }
 
         } else {
-            console.error("Node should pass through html state check before being converted, incorrect html formate issue ")
             return
         }
 

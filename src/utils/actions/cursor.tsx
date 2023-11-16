@@ -27,9 +27,10 @@ export const updateCaretToMatch = ({ id, currentPosition, selection }: { id: str
                  * 
                  */
                 if (node!.firstChild && node!.firstChild!.nodeType === 3) {
-                    let currentLength = node!.firstChild.textContent?.length;
+                    let currentLength = node!.firstChild.textContent?.length ?? 0;
                     let movePosition = currentPosition
-                    if (currentLength && movePosition > currentLength) movePosition = currentLength;
+                    if (movePosition < 0 || (currentLength && movePosition > currentLength)) movePosition = currentLength;
+
                     range.setStart(node!.firstChild!, movePosition)
                 }
                 /**

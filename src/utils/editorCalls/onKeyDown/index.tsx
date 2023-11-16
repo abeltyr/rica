@@ -6,7 +6,7 @@ import { remove } from './remove';
 
 export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
-    console.log("on keyDown", event.key, event.code)
+    // console.log("on keyDown", event.key, event.code)
 
     let skipPrevention = true;
     if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -21,8 +21,6 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     let id = node.id;
     let currentPosition = selection!.focusOffset;
     // using the node fetch the id, current position
-
-    console.log("children", node.children, currentPosition, id)
 
     if (node.children.length > 0) {
         const index = caretIndexFinder({ node });

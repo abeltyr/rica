@@ -84,6 +84,7 @@ export const updateContentChildren = async ({ id, childrenId }: { id: string, ch
     }
     if (contents[newId]) {
         contents[newId].children = childrenId;
+        contents[newId].content = undefined;
     }
 }
 
