@@ -1,12 +1,21 @@
+import { EditorChildrenType, EditorStateContentType, ValueType } from '@/interface/editor';
 import { parentClass } from '@/utils/commons';
 import { getContent, children } from '@/utils/editors/data';
 
-export const getChildren = ({ parentId }: { parentId: string, }) => {
-    return children[parentId];
+export const getChildren = ({ parentId }: { parentId: string }): ValueType[] => {
+    const data = children[parentId];
+    if (data) {
+        const value: ValueType[] = JSON.parse(JSON.stringify(data));
+        return value;
+    }
+    else {
+        return []
+    }
 }
 
-export const getAllChildren = () => {
-    return children;
+export const getAllChildren = (): EditorChildrenType => {
+    const value: EditorChildrenType = JSON.parse(JSON.stringify(children));
+    return value;
 }
 
 export const getChildrenIndex = ({ parentId, contentId }: { parentId: string, contentId: string }) => {
@@ -31,11 +40,37 @@ export const getRootParent = (id: string): number | undefined => {
             rootParentIndex = getRootParent(parentId)
         } else {
             parentId = parentClass;
-            const childIndex = getChildrenIndex({ contentId: id, parentId: parentClass })
-            rootParentIndex = childIndex;
+            rootParentIndex = getChildrenIndex({ contentId: id, parentId: parentClass });
         }
     } else {
         console.error(" content with id ", id, " doesn't exist")
     }
     return rootParentIndex
+}
+
+export const fetchLastChild = (value: EditorStateContentType): EditorStateContentType | undefined => {
+    let contentValue: EditorStateContentType | undefined;
+    if (value.content != undefined) {
+        contentValue = value
+    } else if (value.children) {
+        const children = getChildren({ parentId: value.children });
+        const content = getContent({ id: children[children.length - 1].contentId });
+        contentValue = fetchLastChild(content);
+    }
+
+    return contentValue
+}
+
+
+export const fetchFirstChild = (value: EditorStateContentType): EditorStateContentType | undefined => {
+    let contentValue: EditorStateContentType | undefined;
+    if (value.content != undefined) {
+        contentValue = value
+    } else if (value.children) {
+        const children = getChildren({ parentId: value.children });
+        const content = getContent({ id: children[0].contentId });
+        contentValue = fetchFirstChild(content);
+    }
+
+    return contentValue
 }

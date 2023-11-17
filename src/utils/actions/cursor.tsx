@@ -1,5 +1,6 @@
-export const updateCaretToMatch = ({ id, currentPosition, selection }: { id: string, currentPosition: number, selection: Selection }) => {
+export const updateCaretToMatch = ({ id, currentPosition }: { id: string, currentPosition: number }) => {
 
+    const selection = window.getSelection();
     if (selection !== null) {
 
         const contentEditableElement = document.getElementById(id);

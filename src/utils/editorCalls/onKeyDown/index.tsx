@@ -1,6 +1,5 @@
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
-import { caretIndexFinder, htmlConvertor, stateAdjuster, updateCaretToMatch } from '@/utils/actions';
-import { updateValueContent } from '@/utils/editors/data';
+import { caretIndexFinder, htmlConvertor, stateAdjuster } from '@/utils/actions';
 import { keyInputUpdate } from './keyInput';
 import { remove } from './remove';
 
