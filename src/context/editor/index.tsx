@@ -3,29 +3,65 @@
 import { Editor } from '@/interface/editor';
 import React, { useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { getContent, setupChildren, setupContents, setupRoot } from '@/utils/editors/data';
-import { childIntegration } from '@/utils/editors/node';
+import { getChildren, getContent, setupChildren, setupContents } from '@/utils/editors/data';
+import { childIntegration } from '@/utils/render';
+import { parentClass } from '@/utils/commons';
 
 const defaultEditorValue: Editor = {
     id: v4(),
     editorState: {
         children: {
-            "2": [
+            "Editor": [
+                {
+                    contentId: "0",
+                },
+                {
+                    contentId: "12",
+                },
+                {
+                    contentId: "100",
+                },
+                {
+                    contentId: "11",
+                },
+                {
+                    contentId: "14",
+                },
+                {
+                    contentId: "42",
+                },
+                {
+                    contentId: "15",
+                },
+                {
+                    contentId: "40",
+                },
+                {
+                    contentId: "13",
+                },
+                {
+                    contentId: "41",
+                },
+                {
+                    contentId: "20",
+                }
+            ],
+            "20": [
                 {
                     contentId: "3",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "4",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "7",
-                    parentId: "2",
+                    parentId: "20",
                 },
                 {
                     contentId: "8",
-                    parentId: "2",
+                    parentId: "20",
                 }
             ],
             "4": [
@@ -36,6 +72,54 @@ const defaultEditorValue: Editor = {
                 {
                     contentId: "6",
                     parentId: "4",
+                },
+            ],
+            "40": [
+                {
+                    contentId: "50",
+                    parentId: "40",
+                },
+            ],
+            "41": [
+                {
+                    contentId: "51",
+                    parentId: "41",
+                },
+            ],
+            "42": [
+                {
+                    contentId: "52",
+                    parentId: "42",
+                },
+            ],
+            "50": [
+                {
+                    contentId: "60",
+                    parentId: "50",
+                },
+                {
+                    contentId: "70",
+                    parentId: "50",
+                },
+            ],
+            "51": [
+                {
+                    contentId: "61",
+                    parentId: "51",
+                },
+                {
+                    contentId: "71",
+                    parentId: "51",
+                },
+            ],
+            "52": [
+                {
+                    contentId: "62",
+                    parentId: "52",
+                },
+                {
+                    contentId: "72",
+                    parentId: "52",
                 },
             ],
             "8": [
@@ -59,8 +143,8 @@ const defaultEditorValue: Editor = {
                 content: "Poland",
                 format: null
             },
-            "1": {
-                id: "1",
+            "100": {
+                id: "100",
                 type: "P",
                 className: "",
                 direction: "ltr",
@@ -69,13 +153,13 @@ const defaultEditorValue: Editor = {
                 format: null,
 
             },
-            "2": {
-                id: "2",
+            "20": {
+                id: "20",
                 type: "P",
                 className: "",
                 direction: "ltr",
-                indent: 10,
-                children: "2",
+                indent: 50,
+                children: "20",
                 format: "Start"
             },
             "3": {
@@ -86,7 +170,7 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 content: "Welcome ",
                 format: null,
-                parentId: "2"
+                parentId: "20"
             },
             "4": {
                 id: "4",
@@ -96,12 +180,144 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 children: "4",
                 format: null,
-                parentId: "2",
+                parentId: "20",
                 additional: {
                     link: {
                         href: "https://google.com",
                     }
                 },
+            },
+            "40": {
+                id: "40",
+                type: "P",
+                className: "font-bold text-red-300 italic no-underline",
+                direction: "ltr",
+                indent: 0,
+                children: "40",
+                format: null,
+            },
+            "41": {
+                id: "41",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "41",
+                format: null,
+            },
+            "42": {
+                id: "42",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "42",
+                format: null,
+            },
+            "50": {
+                id: "50",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "50",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "40",
+            },
+            "51": {
+                id: "51",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "51",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "41",
+            },
+            "52": {
+                id: "52",
+                type: "InlineLink",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                children: "52",
+                format: null,
+                additional: {
+                    link: {
+                        href: "https://google.com",
+                    }
+                },
+                parentId: "42",
+            },
+            "60": {
+                id: "60",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "50",
+            },
+            "70": {
+                id: "70",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "50",
+            },
+            "61": {
+                id: "61",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "51",
+            },
+            "71": {
+                id: "71",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "51",
+            },
+            "62": {
+                id: "62",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+                parentId: "52",
+            },
+            "72": {
+                id: "72",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: " Data ",
+                format: null,
+                parentId: "52",
             },
             "5": {
                 id: "5",
@@ -131,7 +347,7 @@ const defaultEditorValue: Editor = {
                 indent: 0,
                 content: " Pp Data ",
                 format: null,
-                parentId: "2",
+                parentId: "20",
             },
             "8":
             {
@@ -146,7 +362,7 @@ const defaultEditorValue: Editor = {
                         href: "https://google.com",
                     }
                 },
-                parentId: "2",
+                parentId: "20",
 
             },
             "9": {
@@ -169,12 +385,52 @@ const defaultEditorValue: Editor = {
                 format: null,
                 parentId: "8",
             },
+            "11": {
+                id: "11",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
+            "12": {
+                id: "12",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "",
+                format: null,
+            },
+            "13": {
+                id: "13",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "",
+                format: null,
+            },
+            "14": {
+                id: "14",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
+            "15": {
+                id: "15",
+                type: "P",
+                className: "",
+                direction: "ltr",
+                indent: 0,
+                content: "Link",
+                format: null,
+            },
         },
-        root: [
-            "0",
-            "1",
-            "2"
-        ],
         rule: {
             availableFeature: [],
             maxChildrenAmount: null
@@ -211,27 +467,29 @@ const EditorProvider: React.FC<Props> = ({ children }) => {
     useEffect(() => {
         setupContents(editorValue.editorState.content);
         setupChildren(editorValue.editorState.children);
-        setupRoot(editorValue.editorState.root)
     })
 
 
     const renderEditorDom = () => {
-        const rootEditorElement = document.getElementById('Editor');
+        const rootEditorElement = document.getElementById(parentClass);
         let count = 0
-        editorValue.editorState.root.map((value, index) => {
-            const editableState = getContent({ id: value });
-            if (editableState) {
-                const parentElement = childIntegration({
-                    editorStateData: editableState,
-                })
-                if (rootEditorElement?.children[count] == null) {
-                    rootEditorElement?.appendChild(parentElement)
-                } else {
-                    rootEditorElement?.replaceChild(parentElement, rootEditorElement.children[count])
+        const children = getChildren({ parentId: parentClass })
+        if (children) {
+            children.map((value, index) => {
+                const editableState = getContent({ id: value.contentId });
+                if (editableState) {
+                    const parentElement = childIntegration({
+                        editorStateData: editableState,
+                    })
+                    if (rootEditorElement?.children[count] == null) {
+                        rootEditorElement?.appendChild(parentElement)
+                    } else {
+                        rootEditorElement?.replaceChild(parentElement, rootEditorElement.children[count])
+                    }
+                    count++;
                 }
-                count++;
-            }
-        })
+            })
+        }
     }
 
     return (

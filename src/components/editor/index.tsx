@@ -1,192 +1,47 @@
 'use client'
 
 import { useEditor } from '@/context/editor'
+import { parentClass } from '@/utils/commons';
+import { onCopy, onDragStart, onInput, onKeyDown, onKeyUp, onPaste } from '@/utils/editorCalls';
 import React, { useEffect } from 'react'
 
 const Editor = () => {
-
-    const { editorValue, renderEditorDom, setEditorValue } = useEditor();
+    const { renderEditorDom } = useEditor();
     useEffect(() => {
         renderEditorDom();
     })
-
-
     return (
         <div
-            className={`w-full py-2 px-4 outline-none cursor-text block whitespace-pre-wrap break-words select-text border-2 rounded-xl`}
-            id="Editor"
+            id={parentClass}
             contentEditable={true}
-            onDragStart={(event: any) => {
-                event.preventDefault();
-            }}
-            onInput={() => {
-                // call the function getSelect to get the node and the current selection 
-
-                // using the node fetch the id, current position
-
-                /** 
-                 * based on the current data loop through the node and fix any 
-                 * new data that is added in the node and then the json
-                */
-
-
-                console.log("here")
-            }}
-            onKeyDown={async (event: React.KeyboardEvent<HTMLDivElement>) => {
-                event.preventDefault();
-
-                // call the function getSelect to get the node and the current selection 
-
-                // using the node fetch the id, current position
-
-                let id;
-
-                let currentPosition;
-
-                /**
-                 * call the getTextSelection to fetch the selected text in a form of an array
-                 */
-
-
-                // setup an if to check when there is text selection here
-
-                /**
-                 * if the selection has value
-                 */
-
-
-                if (event.key.length === 1) {
-                    /**
-                     * Here goes the function to add the added key value to the appropriate json
-                     * and update the node accordingly
-                     * */
-
-
-                    /**
-                     * setup the carter position based on the current one by adding one to it 
-                     * then call the update function using the id and the currentPosition
-                     * */
-                }
-
-
-                if (event.key === "Backspace" || event.key === "Delete") {
-
-                    /**
-                     * Here check if it backspace or delete and run the function to remove the value 
-                     * from the selected content type based on the position of the caret and the type 
-                     * of key pressed and update the json and the node accordingly
-                     * */
-
-
-                    /**
-                     * setup the carter position based on the current one by keeping it or moving it back one left
-                     * by subtracting to it by one then call the update function using the id and the currentPosition
-                     * */
-
-                    /**
-                     * if the deleted value is the last of the content 
-                     */
-                }
-
-
-                if (event.key === "Tap") {
-                    /**
-                     * check the previous clicked value move the content by one margin 
-                     * in any direction by updating the indent value and adding a margin value 
-                     * to the node
-                     * */
-                }
-
-
-                if (event.key === "Enter") {
-                    /**
-                     * run the function to cut the text or children and move it to the next
-                     * root
-                     * */
-
-
-                    /**
-                     * setup the carter position to the first then call the 
-                     * update function using the id and the currentPosition for the new root
-                     * */
-                }
-
-                // shortcuts
-                if (event.key === "Shift") {
-                    /**
-                     * save the key Shift has been clicked and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Meta") {
-                    /**
-                     * save the key Meta has been clicked and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Control") {
-                    /**
-                     * save the key Control has been clicked and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Alt") {
-                    /**
-                     * save the key Alt has been clicked and is being for the shortcut
-                     * */
-                }
-
-            }}
-
-            onKeyUp={(event) => {
-                console.log(event.key)
-                if (event.key === "Shift") {
-                    /**
-                     * save the key Shift has been released and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Meta") {
-                    /**
-                     * save the key Meta has been released and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Control") {
-                    /**
-                     * save the key Control has been released and is being for the shortcut
-                     * */
-                }
-                if (event.key === "Alt") {
-                    /**
-                     * save the key Alt has been released and is being for the shortcut
-                     * */
-                }
-            }}
-            onPaste={(event) => {
-
-                event.preventDefault();
-                const clipboardData = event.clipboardData;
-                const pastedText = clipboardData.getData('text');
-
-                // Now you can do something with the pasted text
-                console.log("pastedText", pastedText);
-                const lines = pastedText.split(/\r?\n/);
-
-                console.log("lines", lines);
-
-            }}
-            onCopy={(event) => {
-
-                event.preventDefault();
-                const clipboardData = event;
-                // const pastedText = clipboardData.getData('text');
-
-                // Now you can do something with the pasted text
-                // console.log("pastedText", clipboardData);
-                // const lines = pastedText.split(/\r?\n/);
-
-                // console.log("lines", lines);
-
-            }}
+            className={`w-full py-2 px-4 outline-none cursor-text block whitespace-pre-wrap break-words select-text border-2 rounded-xl`}
+            onDragStart={onDragStart}
+            onInput={onInput}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onPaste={onPaste}
+            onCopy={onCopy}
         >
         </div>
     )
 }
 
 export default Editor
+
+
+
+{/* sadda
+            <p id="20" key="20" className="leading-7 outline-none cursor-text text-start ">
+                <span id="30" key="30">Welcome </span> sadda das hajs adssajk
+                <a id="40" key="40" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+                    <span id="50" key="50" className="font-bold text-red-300 italic no-underline"> To </span>
+                    <span id="60" key="60">Link </span>
+                </a>
+                saads asd
+                <span id="70" key="70"> Pp Data </span>
+                jknkj k
+                <a id="80" key="80" className="underline text-blue-300 italic " href="https://google.com" target="_blank">
+                    <span id="90" key="90" className="font-bold italic"> To </span>
+                    <span id="100" key="100">Link</span>
+                </a>
+            </p> */}

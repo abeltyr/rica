@@ -1,13 +1,20 @@
 import { EditorStateContentType } from '@/interface/editor';
+import { subClassName } from '@/utils/commons';
 
 export const spanChild = (
     {
         editorStateData,
+        parentNodeExist = false
     }: {
         editorStateData: EditorStateContentType,
+        parentNodeExist?: boolean
     }
 ) => {
-    const id = editorStateData.id;
+
+    let id = editorStateData.id;
+    if (parentNodeExist)
+        id = `${subClassName}${editorStateData.id}`;
+
     const element = document.createElement("span");
     element.setAttribute('id', id);
     element.setAttribute('key', id);
