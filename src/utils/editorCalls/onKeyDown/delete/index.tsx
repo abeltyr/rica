@@ -1,6 +1,6 @@
 import { EditorStateContentType, } from '@/interface/editor';
-import { fetchLastChild, getChildren, getChildrenIndex, getContent, getRootParent, getRootParentValue, removeChildrenContent, updateValueContent, validateId } from '@/utils/editors/data';
-import { backSpaceMovement } from './backSpaceMovement';
+import { fetchLastChild, getChildren, getChildrenIndex, getContent, getRootParentValue, removeChildrenContent, updateValueContent, validateId } from '@/utils/editors/data';
+import { backSpaceMovement } from './deleteMovement';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
 
@@ -23,20 +23,16 @@ const getLastFirstChildId = (value: EditorStateContentType): string => {
     return id
 }
 
-export const remove = (
+export const deleteKey = (
     {
         id,
-        key,
         node,
         currentPosition,
-        selection
     }:
         {
             id: string,
-            key: string,
             node: Node,
             currentPosition: number,
-            selection: Selection
         }
 ) => {
 
@@ -44,27 +40,11 @@ export const remove = (
     const contentId = validateId(id)
     const content = getContent({ id: contentId })
     if (content) {
-        let pass = false;
-        const rootParentId = getRootParentValue({ contentValue: content });
-        const rootContent = getContent({ id: rootParentId });
-        const firstChildId = getLastFirstChildId(rootContent)
-        if (firstChildId === contentId) pass = true
 
-
-        console.log(currentPosition, node, node.parentElement);
-
-        if (key === "Backspace" && currentPosition === 0 && pass) {
-            backSpaceMovement({
-                currentPosition,
-                id,
-                selection
-            })
-            return
-        }
 
         const textValue = node.textContent ?? "";
 
-        if (key === "Delete" && currentPosition === textValue.length) {
+        if (currentPosition === textValue.length) {
             console.log("on the last")
 
             // if the id is at the last of the root the root will need to remove the current one and move it to the root above it
@@ -78,6 +58,7 @@ export const remove = (
 
 
 
+
         /**
            * Here check if it backspace or delete and run the function to remove the value 
            * from the selected content type based on the position of the caret and the type 
@@ -85,28 +66,37 @@ export const remove = (
            * */
 
 
-        // if (textValue.length === 1) {
-        //     console.log("last")
-        //     console.log("parent", node.parentElement)
-        //     if (node instanceof Element) {
-        //         parentRemoval(node)
-        //     }
 
-        // } else {
-        //     let firstValueData = textValue.substring(0, currentPosition - 1);
-        //     let secondValueData = textValue.substring(currentPosition);
-        //     updateValueContent({ id, value: firstValueData + secondValueData })
-        //     const position = Math.min(currentPosition - 1, textValue.length);
+        if (textValue.length === 1) {
+            console.log("last text so remove all")
+            console.log("parent", node.parentElement)
+            // if (node instanceof Element) {
+            //     parentRemoval(node)
+            // }
 
-        //     console.log("rest", position)
-        //     console.log("position", position, id)
-        //     if (position === 0) {
-        //         if (node instanceof Element)
-        //             moveBack(node);
-        //     } else {
-        //         updateCaretToMatch({ id, currentPosition: position })
-        //     }
-        // }
+        } else {
+
+
+
+
+
+            // let firstValueData = textValue.substring(0, currentPosition - 1);
+            // let secondValueData = textValue.substring(currentPosition);
+            // updateValueContent({ id, value: firstValueData + secondValueData })
+            const position = Math.min(currentPosition - 1, textValue.length);
+
+            console.log("position", position, id)
+
+            if (position === 0) {
+                console.log("currentPosition will be moved to the zero index so need to adjust properly ")
+
+                // if (node instanceof Element)
+                //     moveBack(node);
+            }
+            else
+                console.log("update the normalflow")
+
+        }
 
     }
 }
