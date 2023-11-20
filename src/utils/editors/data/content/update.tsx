@@ -1,7 +1,8 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { contents } from './data';
-import { spanChild } from '@/utils/render';
+import { childIntegration, spanChild } from '@/utils/render';
 import { subClassName } from '@/utils/commons';
+import { updateCaretToMatch } from '@/utils/actions';
 
 
 export const upsetContent = ({ id, value, setupNode = false }: { id: string, value: EditorStateContentType, setupNode?: boolean }) => {
@@ -39,9 +40,44 @@ export const updateValueContent = async ({ id, value }: { id: string, value: str
 
     contents[newId].content = value;
     contents[newId].children = undefined;
-    const contentChild = document.getElementById(id);
-    if (contentChild)
-        contentChild.textContent = value;
+    const contentNode = document.getElementById(id);
+    if (contentNode) {
+
+
+        console.log("newId", newId)
+        console.log("id", id)
+
+
+
+
+        let rerender = false;
+        if (value != "") {
+            if (contentNode.firstChild && contentNode.tagName != "SPAN") {
+                const firstChildNode = contentNode.firstChild;
+                if (firstChildNode instanceof Element) {
+                    if (firstChildNode.tagName === "SPAN") {
+                        firstChildNode.textContent = value;
+                        return
+                    }
+                    else {
+                        rerender = true;
+                    }
+                }
+            }
+            if (!rerender)
+                contentNode.textContent = value;
+        }
+
+
+        if (value === "" || rerender) {
+            const newNode = childIntegration({ editorStateData: contents[newId] });
+            contentNode.replaceWith(newNode)
+            updateCaretToMatch({ id, currentPosition: 0 })
+        }
+
+
+    }
+
 
 }
 

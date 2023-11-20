@@ -6,6 +6,25 @@ import { deleteKey } from './delete';
 import { fetchLastChild, getChildren, getContent } from '@/utils/editors/data';
 
 
+const FindFirstChildTagName = (node: Node): string | undefined => {
+
+
+    let tagName: string | undefined;
+
+    if (node.nodeType === 1) {
+        if (node.firstChild && node.firstChild.nodeType === 1) {
+            tagName = FindFirstChildTagName(node.firstChild);
+        } else {
+            if (node instanceof Element)
+                tagName = node.tagName;
+        }
+    }
+
+
+    return tagName;
+
+}
+
 
 export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
@@ -25,11 +44,18 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     let currentPosition = selection!.focusOffset;
     // using the node fetch the id, current position
 
+
+    const tagName = FindFirstChildTagName(node);
+
+    console.log(tagName, node.children, node.children.length > 0,
+        !(node.children.length === 1 && tagName === "BR"));
     if (
         node.children.length > 0 &&
-        !(node.children.length === 1 && node.children[0].tagName === "BR")
+        !(node.children.length === 1 && tagName === "BR")
     ) {
         console.info("html need cleaning up",)
+
+        //TODO: NEED TO FIX THE ISSUE OF REMOVING DATA ON ROOT NODE
         const index = caretIndexFinder({ node });
         await stateAdjuster({ node })
         await htmlConvertor({ node })

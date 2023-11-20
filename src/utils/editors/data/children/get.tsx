@@ -54,8 +54,10 @@ export const fetchLastChild = (value: EditorStateContentType): EditorStateConten
         contentValue = value
     } else if (value.children) {
         const children = getChildren({ parentId: value.children });
-        const content = getContent({ id: children[children.length - 1].contentId });
-        contentValue = fetchLastChild(content);
+        if (children.length > 0) {
+            const content = getContent({ id: children[children.length - 1].contentId });
+            contentValue = fetchLastChild(content);
+        }
     }
 
     return contentValue
@@ -73,4 +75,22 @@ export const fetchFirstChild = (value: EditorStateContentType): EditorStateConte
     }
 
     return contentValue
+}
+
+export const getLastFirstChildId = (value: EditorStateContentType): string => {
+
+    let id;
+    if (value.children) {
+        const children = getChildren({ parentId: value.children })
+        if (children.length > 0) {
+            const content = getContent({ id: children[0].contentId })
+            id = getLastFirstChildId(content);
+        } else {
+            id = value.id
+        }
+    } else {
+        id = value.id
+    }
+
+    return id
 }

@@ -80,11 +80,7 @@ export const backSpaceMovement = async (id: string) => {
                 })
             }
         }
-
-        console.log("backspace movement")
-        console.log(getContents())
-        console.log(getAllChildren())
-
+        console.info("backspace movement based movement done")
     }
     return
 
