@@ -7,14 +7,12 @@ export const keyInputUpdate = (
         key,
         node,
         currentPosition,
-        selection
     }:
         {
             id: string,
             key: string,
             node: Node,
             currentPosition: number,
-            selection: Selection
         }
 ) => {
 
@@ -36,6 +34,5 @@ export const keyInputUpdate = (
     updateCaretToMatch({
         id,
         currentPosition,
-        selection: selection!
     })
 }

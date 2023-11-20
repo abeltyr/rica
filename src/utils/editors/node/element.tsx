@@ -25,3 +25,22 @@ export const getCursorPosition = (id: string) => {
     }
     return position;
 }
+
+
+export const getFirstChildTagName = (node: Node): string | undefined => {
+
+
+    let tagName: string | undefined;
+
+    if (node.nodeType === 1) {
+        if (node.firstChild && node.firstChild.nodeType === 1) {
+            tagName = getFirstChildTagName(node.firstChild);
+        } else {
+            if (node instanceof Element)
+                tagName = node.tagName;
+        }
+    }
+
+    return tagName;
+
+}

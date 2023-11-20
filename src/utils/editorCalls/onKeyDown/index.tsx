@@ -1,7 +1,11 @@
-import { getCurrentlyEditedElement } from '@/utils/editors/node';
+import { getCurrentlyEditedElement, getFirstChildTagName } from '@/utils/editors/node';
 import { caretIndexFinder, htmlConvertor, stateAdjuster } from '@/utils/actions';
 import { keyInputUpdate } from './keyInput';
-import { remove } from './remove';
+import { backSpaceKey } from './backSpace';
+import { deleteKey } from './delete';
+import { fetchLastChild, getChildren, getContent } from '@/utils/editors/data';
+
+
 
 export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
@@ -21,15 +25,32 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     let currentPosition = selection!.focusOffset;
     // using the node fetch the id, current position
 
-    if (node.children.length > 0) {
-        const index = caretIndexFinder({ node });
+
+    const tagName = getFirstChildTagName(node);
+    if (
+        node.children.length > 0 &&
+        !(node.children.length === 1 && tagName === "BR")
+    ) {
         console.info("html need cleaning up",)
+
+        //TODO: NEED TO FIX THE ISSUE OF REMOVING DATA ON ROOT NODE
+        const index = caretIndexFinder({ node });
         await stateAdjuster({ node })
         await htmlConvertor({ node })
-        if (index > 0) {
+        if (index >= 0) {
             let editorData = node.children[index];
             node = editorData;
             id = editorData.id;
+        }
+        else {
+            const content = getContent({ id: node.children[0].id });
+            const lastContent = fetchLastChild(content)
+            if (lastContent) {
+                let editorData = document.getElementById(lastContent.id)
+                node = editorData;
+                id = lastContent.id;
+                currentPosition = 0;
+            }
         }
     }
 
@@ -49,18 +70,24 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
             id,
             node,
             key: event.key,
-            selection: selection!,
             currentPosition,
         })
     }
 
 
-    if (event.key === "Backspace" || event.key === "Delete") {
-        remove({
+    if (event.key === "Backspace") {
+        backSpaceKey({
+            id,
+            currentPosition,
+            node
+        })
+    }
+
+
+    if (event.key === "Delete") {
+        deleteKey({
             id,
             node,
-            key: event.key,
-            selection: selection!,
             currentPosition,
         })
     }

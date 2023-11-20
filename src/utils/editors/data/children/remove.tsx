@@ -8,7 +8,7 @@ export const removeChildren = ({ parentId }: { parentId: string }) => {
         const removingChild: ValueType[] = JSON.parse(JSON.stringify(
             children[parentId]));
         removingChild.map((value, _) => {
-            removeChildrenContent({ contentId: value.contentId, parentId });
+            removeChildrenContent({ contentId: value.contentId, parentId: value.parentId ?? parentId });
         })
         if (removingChild.length === 0) {
             delete children[parentId];
@@ -28,6 +28,7 @@ export const removeChildrenContent = async ({ parentId, contentId }: { parentId:
             }
         }
         removeContent({ id: contentId })
+        removeChildren({ parentId: contentId })
     }
 }
 
