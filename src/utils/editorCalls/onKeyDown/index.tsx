@@ -1,29 +1,10 @@
-import { getCurrentlyEditedElement } from '@/utils/editors/node';
+import { getCurrentlyEditedElement, getFirstChildTagName } from '@/utils/editors/node';
 import { caretIndexFinder, htmlConvertor, stateAdjuster } from '@/utils/actions';
 import { keyInputUpdate } from './keyInput';
 import { backSpaceKey } from './backSpace';
 import { deleteKey } from './delete';
 import { fetchLastChild, getChildren, getContent } from '@/utils/editors/data';
 
-
-const FindFirstChildTagName = (node: Node): string | undefined => {
-
-
-    let tagName: string | undefined;
-
-    if (node.nodeType === 1) {
-        if (node.firstChild && node.firstChild.nodeType === 1) {
-            tagName = FindFirstChildTagName(node.firstChild);
-        } else {
-            if (node instanceof Element)
-                tagName = node.tagName;
-        }
-    }
-
-
-    return tagName;
-
-}
 
 
 export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -45,10 +26,7 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     // using the node fetch the id, current position
 
 
-    const tagName = FindFirstChildTagName(node);
-
-    console.log(tagName, node.children, node.children.length > 0,
-        !(node.children.length === 1 && tagName === "BR"));
+    const tagName = getFirstChildTagName(node);
     if (
         node.children.length > 0 &&
         !(node.children.length === 1 && tagName === "BR")

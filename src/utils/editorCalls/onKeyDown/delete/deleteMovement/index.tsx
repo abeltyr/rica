@@ -1,7 +1,7 @@
 import { EditorStateContentType, ValueType } from '@/interface/editor';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getAllChildren, getChildren, getContent, getContents, getRootParent, removeChildren, removeChildrenContent, removeChildrenData, removeContent, updateChildrenValue, updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent, validateId } from '@/utils/editors/data';
+import { getAllChildren, getChildren, getContent, getContents, getRootParentIndex, removeChildren, removeChildrenContent, removeChildrenData, removeContent, updateChildrenValue, updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent, validateId } from '@/utils/editors/data';
 import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 import { bch_cch } from './actions/bch_cch';
@@ -29,7 +29,7 @@ export const backSpaceMovement = async (
 ) => {
 
     const contentId = validateId(id)
-    const rootIndex = getRootParent(contentId);
+    const rootIndex = getRootParentIndex(contentId);
 
     console.log("firstAtRoot", rootIndex)
     console.log("getContents", getContents())

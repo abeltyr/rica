@@ -1,5 +1,5 @@
 import { parentClass } from '@/utils/commons';
-import { getAllChildren, getChildren, getContent, getContents, getRootParent, validateId } from '@/utils/editors/data';
+import { getAllChildren, getChildren, getContent, getContents, getRootParentIndex, validateId } from '@/utils/editors/data';
 import { bch_cch } from './actions/bch_cch';
 import { bch_cco } from './actions/bch_cco';
 import { bch_cco_empty } from './actions/bch_cco_empty';
@@ -14,7 +14,7 @@ import { bco_empty_cco } from './actions/bco_empty_cco';
 export const backSpaceMovement = async (id: string) => {
 
     const contentId = validateId(id)
-    const rootIndex = getRootParent(contentId);
+    const rootIndex = getRootParentIndex(contentId);
     if (rootIndex && rootIndex > 0) {
         const root = getChildren({ parentId: parentClass });
 
