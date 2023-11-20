@@ -1,6 +1,6 @@
 import { EditorStateContentType, } from '@/interface/editor';
 import { getContent, getContents, getRootParentValue, updateValueContent, validateId } from '@/utils/editors/data/content';
-import { fetchLastChild, getAllChildren, getChildren, getChildrenIndex, getLastFirstChildId, removeChildren, removeChildrenContent } from '@/utils/editors/data/children';
+import { fetchFirstChild, fetchLastChild, getAllChildren, getChildren, getChildrenIndex, getLastFirstChildId, removeChildren, removeChildrenContent } from '@/utils/editors/data/children';
 import { backSpaceMovement } from './backSpaceMovement';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
@@ -11,13 +11,11 @@ export const backSpaceKey = (
         id,
         node,
         currentPosition,
-    }:
-        {
-            id: string,
-            node: Node,
-            currentPosition: number,
-        }
-) => {
+    }: {
+        id: string,
+        node: Node,
+        currentPosition: number,
+    }) => {
 
 
     let contentId = validateId(id)
@@ -81,17 +79,17 @@ export const backSpaceKey = (
             }
 
         } else {
+            console.log("NTF - normal flow of deleting a character from the set")
             const position = Math.min(caretPosition - 1, textValue.length);
             let firstValueData = textValue.substring(0, caretPosition - 1);
             let secondValueData = textValue.substring(caretPosition);
-            console.log("NTF - normal flow of deleting a character from the set")
             updateValueContent({ id: contentId, value: firstValueData + secondValueData })
             updateCaretToMatch({ id: contentId, currentPosition: position })
 
         }
 
-        // console.log(getContents());
-        // console.log(getAllChildren());
+        console.log(getContents());
+        console.log(getAllChildren());
     }
 }
 
@@ -108,26 +106,11 @@ const parentRemoval = (id: string) => {
         const parentId = parent.id;
 
         if (parentId === parentClass) {
-            // console.log(" this is the parent class children", node, node.parentElement)
-
-            // const content = getContent({ id: contentId })
-            // console.log(content);
-            // content.content = "";
-            // // const spanChildElement = spanChild({ editorStateData: content, parentNodeExist: true });
-            // // node.firstChild?.replaceWith(spanChildElement);
-
-
-            // removeChildren()
             const content = getContent({ id: contentId })
             if (content.children) {
-                // console.log("remove his children", content.children)
                 removeChildren({ parentId: content.children })
             }
-
-
-            // console.log("rebuild the content")
             updateValueContent({ id: contentId, value: "" })
-
             return
         }
 
@@ -138,9 +121,7 @@ const parentRemoval = (id: string) => {
 
         const parentChildren = getChildren({ parentId: parentContent.children })
 
-        // console.log("index", index, node, node.parentElement);
         if (index > 0) {
-            // console.log("this mean it is not the only child of the parent list and it is also not at the zero index")
             const beforeNode = parentChildren[index - 1]
             const beforeId = beforeNode.contentId;
 
@@ -150,16 +131,12 @@ const parentRemoval = (id: string) => {
                 updateCaretToMatch({ id: lastContent.id, currentPosition: -1 })
             removeChildrenContent({ contentId, parentId })
             node.remove();
-
-            // console.log("delete the current index and move to the next");
         } else {
-            // console.log("parent", parentChildren, parent);
             if (parentChildren.length > 1) {
-                moveBack(parentId)
                 removeChildrenContent({ contentId, parentId })
                 node.remove();
+                moveBack(parentId)
             } else {
-                // console.log("this mean it is at the zero index and last child of the parent, while the parent is not the main parent")
                 parentRemoval(parent.id);
             }
         }
@@ -170,29 +147,37 @@ const parentRemoval = (id: string) => {
 
 const moveBack = (id: string) => {
     const content = getContent({ id });
-    if (content.parentId) {
-        const parent = getContent({ id: content.parentId });
-        if (!parent.children) return
-        const parentChildren = getChildren({ parentId: parent.children });
-        if (parent) {
-            const parentId = parent.id
-            if (parentId != parentClass) {
-                const index = getChildrenIndex({ contentId: id, parentId: parentId })
-                if (index > 0) {
-                    const beforeNode = parentChildren[index - 1]
-                    if (!beforeNode) return;
+    let parentId = content.parentId;
 
-                    const beforeId = beforeNode.contentId;
-                    const beforeContent = getContent({ id: beforeId });
-                    const lastContent = fetchLastChild(beforeContent);
-                    if (lastContent) updateCaretToMatch({ id: lastContent.id, currentPosition: -1 })
-                } else if (parent.parentId) {
-                    moveBack(parent.parentId)
-                }
-            }
-        }
+    if (!parentId) {
+        const children = getChildren({ parentId: id })
+        if (children.length <= 0) return;
+        const beforeContent = getContent({ id: children[0].contentId });
+        const firstContent = fetchFirstChild(beforeContent);
+        if (firstContent) updateCaretToMatch({ id: firstContent.id, currentPosition: 0 })
+        return
     }
 
+
+    const parent = getContent({ id: parentId });
+    let childrenId = parent.children
+    if (!childrenId) return
+
+    if (parent) {
+        const index = getChildrenIndex({ contentId: id, parentId: parentId })
+        if (index > 0) {
+            const parentChildren = getChildren({ parentId: childrenId });
+            const beforeNode = parentChildren[index - 1]
+            if (!beforeNode) return;
+
+            const beforeId = beforeNode.contentId;
+            const beforeContent = getContent({ id: beforeId });
+            const lastContent = fetchLastChild(beforeContent);
+            if (lastContent) updateCaretToMatch({ id: lastContent.id, currentPosition: -1 })
+        } else if (parent.parentId) {
+            moveBack(parent.parentId)
+        }
+    }
 }
 
 const fetchBeforeLastContent = (id: string): EditorStateContentType | undefined => {

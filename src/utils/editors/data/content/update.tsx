@@ -42,14 +42,6 @@ export const updateValueContent = async ({ id, value }: { id: string, value: str
     contents[newId].children = undefined;
     const contentNode = document.getElementById(id);
     if (contentNode) {
-
-
-        console.log("newId", newId)
-        console.log("id", id)
-
-
-
-
         let rerender = false;
         if (value != "") {
             if (contentNode.firstChild && contentNode.tagName != "SPAN") {

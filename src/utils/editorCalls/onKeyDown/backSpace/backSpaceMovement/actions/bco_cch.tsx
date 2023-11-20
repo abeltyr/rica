@@ -1,7 +1,7 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getChildren, getContent, removeChildren, removeChildrenData, updateContentChildren, updateParentContent, upsetChildren, upsetContent } from '@/utils/editors/data';
+import { getChildren, getContent, removeChildren, removeChildrenData, removeContent, updateContentChildren, updateParentContent, upsetChildren, upsetContent } from '@/utils/editors/data';
 import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 
@@ -53,7 +53,7 @@ export const bco_cch = (
     upsetChildren({ value: newChildren, parentId: beforeContent.id })
     updateContentChildren({ childrenId: beforeContent.id, id: beforeContent.id })
     removeChildrenData({ parentId: parentClass, contentId: currentContent.id })
-    //TODO: need to validate if this is need here or other places
+    removeContent({ id: currentContent.id })
     upsetChildren({ parentId: currentContent.id, value: [] })
     removeChildren({ parentId: currentContent.id })
 
