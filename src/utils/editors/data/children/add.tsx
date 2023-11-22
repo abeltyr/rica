@@ -10,9 +10,7 @@ export const addChildren = (
         parentId: string,
         value: ValueType
     }) => {
-    const index = getChildrenIndex({ parentId, contentId: value.contentId })
-    if (!index)
-        children[parentId].push(value);
+    children[parentId].push(value);
 }
 
 
