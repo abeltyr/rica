@@ -31,7 +31,6 @@ export const childrenUpdate = (
         caretPosition,
         contentData: currentRootContent,
         contentId,
-        parentId: rootId,
         newParentId: newRootId,
         updatedParentId: rootId,
     })

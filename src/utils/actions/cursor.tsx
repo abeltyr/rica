@@ -51,6 +51,8 @@ export const updateCaretToMatch = ({ id, currentPosition }: { id: string, curren
 
 
             node!.focus();
+
+            node!.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
         }
     }
 }

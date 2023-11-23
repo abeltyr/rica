@@ -1,21 +1,19 @@
 import { EditorStateContentType, ValueType } from '@/interface/editor';
-import { getContent, getSecondParentValue, removeContent, upsetContent } from '@/utils/editors/data/content';
+import { getContent, getSecondParentValue, removeContent, updateParentContent, upsetContent } from '@/utils/editors/data/content';
 import { splitContent } from '.';
-import { getChildren, getChildrenIndex, removeChildren, upsetChildren } from '@/utils/editors/data/children';
+import { getChildren, getChildrenIndex, removeChildren, updateChildrenValue, upsetChildren } from '@/utils/editors/data/children';
 import { v4 } from 'uuid';
 
 export const splitChildrenContent = (
     {
         contentData,
         caretPosition,
-        parentId,
         updatedParentId,
         newParentId,
         contentId
     }: {
         contentData: EditorStateContentType,
         caretPosition: number,
-        parentId: string,
         updatedParentId?: string,
         newParentId?: string,
         contentId: string
@@ -41,21 +39,30 @@ export const splitChildrenContent = (
 
     if (contentData.children) {
         // first we fetch the index of where the cursor is in perspective of the parent
-        const secondContentId = getSecondParentValue({ contentId, finalId: parentId })
-        const secondLayerIndex = getChildrenIndex({ contentId: secondContentId, parentId: parentId });
-        const currentChildren: ValueType[] = getChildren({ parentId: parentId });
+        const secondContentId = getSecondParentValue({ contentId, finalId: contentData.id })
+        const secondLayerIndex = getChildrenIndex({ contentId: secondContentId, parentId: contentData.id });
+        const currentChildren: ValueType[] = getChildren({ parentId: contentData.id });
 
         // divide the children on the parents based on the index calculated above excluding the index based value
         updatedChildren = currentChildren.slice(0, secondLayerIndex)
         newChildren = currentChildren.slice(secondLayerIndex + 1, currentChildren.length)
 
 
+        newChildren.map((value, index) => {
+            updateParentContent({ id: value.contentId, parentId: newParentId })
+            newChildren[index].parentId = newParentId;
+            updateChildrenValue({
+                contentId: value.contentId,
+                parentId: value.parentId,
+                value: {
+                    contentId: value.contentId, parentId: newParentId
+                }
+            })
+        })
 
         // check if the 
         if (!currentChildren[secondLayerIndex]) return
         const indexContent = getContent({ id: currentChildren[secondLayerIndex].contentId });
-
-
 
 
         if (indexContent) {
@@ -73,28 +80,31 @@ export const splitChildrenContent = (
 
             let updatedIndexContent: EditorStateContentType = {
                 ...indexContent,
-                parentId: updatedParentId,
                 content: undefined,
                 children: indexContent.id
             }
 
 
             const data = splitChildrenContent({
-                caretPosition, contentData: indexContent, parentId: indexContent.id, contentId,
-                updatedParentId: updatedIndexContent.id,
-                newParentId: newIndexContentId,
+                caretPosition,
+                contentData: indexContent,
+                contentId,
+                updatedParentId: indexContent.parentId,
+                newParentId: newIndexContent.id,
             })
+
+
+
+
 
             if (data) {
                 if (data.newChildren && data.newChildren.length > 0) {
                     if (data.newChildren.length === 1) {
                         const contentData = getContent({ id: data.newChildren[0].contentId });
-
                         newIndexContent.className = newIndexContent.className + contentData.className;
                         if (contentData.content) {
                             newIndexContent.content = contentData.content
                             newIndexContent.children = undefined
-                            removeChildren({ parentId: newIndexContent.id })
                         }
                         if (contentData.children) {
                             newIndexContent.children = contentData.children
@@ -104,6 +114,10 @@ export const splitChildrenContent = (
                     }
                     upsetContent({ id: newIndexContent.id, value: newIndexContent })
                     if (newIndexContent.children) upsetChildren({ parentId: newIndexContent.children, value: data.newChildren })
+                    else {
+                        upsetChildren({ parentId: newIndexContent.id, value: [] })
+                        removeChildren({ parentId: newIndexContent.id })
+                    }
                     newChildren = [{
                         contentId: newIndexContent.id,
                         parentId: newIndexContent.parentId,
@@ -117,7 +131,6 @@ export const splitChildrenContent = (
                         if (contentData.content) {
                             updatedIndexContent.content = contentData.content
                             updatedIndexContent.children = undefined
-                            removeChildren({ parentId: updatedIndexContent.id })
                         }
                         if (contentData.children) {
                             updatedIndexContent.children = contentData.children
@@ -128,6 +141,10 @@ export const splitChildrenContent = (
                     }
                     upsetContent({ id: updatedIndexContent.id, value: updatedIndexContent })
                     if (updatedIndexContent.children) upsetChildren({ parentId: updatedIndexContent.children, value: data.updatedChildren })
+                    else {
+                        upsetChildren({ parentId: updatedIndexContent.id, value: [] })
+                        removeChildren({ parentId: updatedIndexContent.id })
+                    }
                     updatedChildren = [...updatedChildren, {
                         contentId: updatedIndexContent.id,
                         parentId: updatedIndexContent.parentId,
