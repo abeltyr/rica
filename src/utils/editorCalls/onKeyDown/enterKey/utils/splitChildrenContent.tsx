@@ -102,7 +102,7 @@ export const splitChildrenContent = (
                     if (data.newChildren.length === 1) {
                         const contentData = getContent({ id: data.newChildren[0].contentId });
                         newIndexContent.className = newIndexContent.className + contentData.className;
-                        if (contentData.content) {
+                        if (contentData.content != undefined) {
                             newIndexContent.content = contentData.content
                             newIndexContent.children = undefined
                         }
@@ -128,7 +128,7 @@ export const splitChildrenContent = (
                     if (data.updatedChildren.length === 1) {
                         const contentData = getContent({ id: data.updatedChildren[0].contentId });
                         updatedIndexContent.className = updatedIndexContent.className + contentData.className;
-                        if (contentData.content) {
+                        if (contentData.content != undefined) {
                             updatedIndexContent.content = contentData.content
                             updatedIndexContent.children = undefined
                         }

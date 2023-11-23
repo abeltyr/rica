@@ -1,5 +1,5 @@
 import { EditorStateContentType } from '@/interface/editor';
-import { upsetContent } from '@/utils/editors/data';
+import { getContent, getLastChild, getRootParentValue, upsetContent } from '@/utils/editors/data';
 import { v4 } from 'uuid';
 
 export const splitContent = ({ contentData, caretPosition, newRootId, updatedParentId }: { contentData: EditorStateContentType, caretPosition: number, newRootId?: string, updatedParentId?: string }) => {
@@ -18,7 +18,12 @@ export const splitContent = ({ contentData, caretPosition, newRootId, updatedPar
             parentId: updatedParentId
         }
 
-        if (newValue.length > 0)
+        const rootId = getRootParentValue({ contentValue: contentData })
+        const root = getContent({ id: rootId })
+
+
+        const lastChildId = getLastChild(root);
+        if (newValue.length > 0 || (newValue.length === 0 && lastChildId === contentData.id))
             newContent = {
                 ...contentData,
                 id: v4(),

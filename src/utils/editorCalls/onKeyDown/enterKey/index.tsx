@@ -50,6 +50,7 @@ export const enterKey = async (
                 rootIndex,
                 rootNode
             })
+            updateCaretToMatch({ id: contentId, currentPosition: caretPosition })
             return
         }
     }
