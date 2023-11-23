@@ -1,29 +1,31 @@
 import { EditorChildrenType, ValueType } from '@/interface/editor';
 import { children } from './data';
 import { getChildrenIndex } from './get';
+import { parentClass } from '@/utils/commons';
 
 export const upsetChildren = ({ parentId, value }: { parentId: string, value: ValueType[] }) => {
     children[parentId] = value;
 }
 
 
-// TODO: check if this will be used
 export const updateChildrenValue = (
     {
         parentId,
-        contentId
+        contentId,
+        value
     }: {
-        parentId: string,
-        contentId: string
+        parentId?: string,
+        contentId: string,
+        value: ValueType
     }) => {
+
+    if (!parentId) parentId = parentClass;
     const contentIndex = getChildrenIndex({ contentId, parentId })
     if (children[parentId] && contentIndex) {
-        children[parentId][contentIndex] = {
-            contentId,
-            parentId,
-        };
+        children[parentId][contentIndex] = value
     }
 }
+
 
 
 export const moveChildren = (

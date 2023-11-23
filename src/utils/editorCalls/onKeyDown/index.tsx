@@ -3,7 +3,8 @@ import { caretIndexFinder, htmlConvertor, stateAdjuster } from '@/utils/actions'
 import { keyInputUpdate } from './keyInput';
 import { backSpaceKey } from './backSpace';
 import { deleteKey } from './delete';
-import { fetchLastChild, getChildren, getContent } from '@/utils/editors/data';
+import { fetchLastChild, getAllChildren, getChildren, getContent, getContents } from '@/utils/editors/data';
+import { enterKey } from './enterKey';
 
 
 
@@ -104,6 +105,11 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
 
     if (event.key === "Enter") {
+
+        enterKey({
+            id,
+            currentPosition,
+        })
         /**
          * run the function to cut the text or children and move it to the next
          * root
@@ -140,5 +146,8 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
     if (skipPrevention)
         event.preventDefault();
+
+    console.log(getContents());
+    console.log(getAllChildren());
 
 }
