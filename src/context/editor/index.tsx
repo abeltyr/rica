@@ -415,7 +415,7 @@ const defaultEditorValue: Editor = {
             "14": {
                 id: "14",
                 type: "P",
-                className: "",
+                className: "font-bold text-red-300 italic no-underline",
                 direction: "ltr",
                 indent: 0,
                 content: "Link",

@@ -108,7 +108,6 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
         enterKey({
             id,
-            node,
             currentPosition,
         })
         /**
@@ -148,7 +147,7 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (skipPrevention)
         event.preventDefault();
 
-    console.log("getContents", getContents());
-    console.log("getAllChildren", getAllChildren());
+    console.log(getContents());
+    console.log(getAllChildren());
 
 }

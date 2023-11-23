@@ -28,12 +28,14 @@ export const childIntegration = (
     if (editorStateData.children) {
         const editableStatChildren = getChildren({ parentId: editorStateData.children });
         editableStatChildren.map((value, _) => {
-            const editableState = getContent({ id: value.contentId })
-            if (editableState) {
-                const childElement = childIntegration({
-                    editorStateData: editableState,
-                })
-                parentElement.appendChild(childElement);
+            if (value.contentId != value.parentId) {
+                const editableState = getContent({ id: value.contentId })
+                if (editableState) {
+                    const childElement = childIntegration({
+                        editorStateData: editableState,
+                    })
+                    parentElement.appendChild(childElement);
+                }
             }
         })
     }
