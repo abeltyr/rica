@@ -1,22 +1,24 @@
 import { EditorContentType, EditorStateContentType } from '@/interface/editor';
 import { contents } from './data';
+import { validateId } from '.';
 
 
 export const getContent = ({ id }: { id: string, }): EditorStateContentType => {
 
-    const data = contents[id]
+    const newId = validateId(id)
+
+    const data = contents[newId]
 
     if (data) {
         const value: EditorStateContentType = JSON.parse(JSON.stringify(data))
         return value;
     } {
         const value: EditorStateContentType = {
-            id: id,
+            id: newId,
             type: "P",
             className: "",
             direction: "",
             indent: 0,
-            content: "",
         }
         return value
     }
@@ -32,7 +34,8 @@ export const getRootParentValue = ({ contentValue }: { contentValue: EditorState
     let id = "";
     if (contentValue) {
         if (contentValue.parentId) {
-            id = getRootParentValue({ contentValue: contents[contentValue.parentId] })
+            const value = getContent({ id: contentValue.parentId })
+            id = getRootParentValue({ contentValue: value })
         } else {
             id = contentValue.id;
         }

@@ -1,22 +1,26 @@
 import { updateCaretToMatch } from '@/utils/actions';
-import { updateValueContent } from '@/utils/editors/data';
+import { getContent, getFirstChildId, updateValueContent } from '@/utils/editors/data';
 
 export const keyInputUpdate = (
     {
         id,
         key,
-        node,
         currentPosition,
     }:
         {
             id: string,
             key: string,
-            node: Node,
             currentPosition: number,
         }
 ) => {
 
-    const textValue = node.textContent ?? "";
+    const contentData = getContent({ id })
+    let textValue = contentData.content ?? "";
+    if (contentData.children) {
+        let firstChildId = getFirstChildId(contentData)
+        const newContentData = getContent({ id: firstChildId })
+        textValue = newContentData.content ?? "";
+    }
     /**
      * Here goes the function to add the added key value to the appropriate json
      * and update the node accordingly

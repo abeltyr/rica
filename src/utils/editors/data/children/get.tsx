@@ -113,3 +113,22 @@ export const getLastChild = (value: EditorStateContentType): string => {
 
     return id
 }
+
+
+export const getFirstChildId = (value: EditorStateContentType): string => {
+
+    let id;
+    if (value.children) {
+        const children = getChildren({ parentId: value.children })
+        if (children.length > 0) {
+            const content = getContent({ id: children[0].contentId })
+            id = getFirstChildId(content);
+        } else {
+            id = value.id
+        }
+    } else {
+        id = value.id
+    }
+
+    return id
+}

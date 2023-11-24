@@ -1,5 +1,6 @@
 import { EditorStateContentType } from '@/interface/editor';
 import { subClassName } from '@/utils/commons';
+import { getContent } from '@/utils/editors/data';
 
 export const spanChild = (
     {
@@ -18,6 +19,9 @@ export const spanChild = (
     const element = document.createElement("span");
     element.setAttribute('id', id);
     element.setAttribute('key', id);
+    element.setAttribute('placeholder', " ");
+
+
     if (editorStateData.className)
         element.className = editorStateData.className;
 
@@ -25,8 +29,7 @@ export const spanChild = (
     if (editorStateData.content)
         element.textContent = editorStateData.content;
     else {
-        const brChildElement = document.createElement("br");
-        element.append(brChildElement);
+        element.textContent = " ";
     }
     return element
 }

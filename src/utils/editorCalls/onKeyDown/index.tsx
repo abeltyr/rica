@@ -1,10 +1,11 @@
 import { getCurrentlyEditedElement, getFirstChildTagName } from '@/utils/editors/node';
-import { caretIndexFinder, htmlConvertor, stateAdjuster } from '@/utils/actions';
+import { caretIndexFinder, getSelectedElements, htmlConvertor, stateAdjuster, updateCaretToMatch } from '@/utils/actions';
 import { keyInputUpdate } from './keyInput';
 import { backSpaceKey } from './backSpace';
 import { deleteKey } from './delete';
-import { fetchLastChild, getAllChildren, getChildren, getContent, getContents } from '@/utils/editors/data';
+import { fetchLastChild, getAllChildren, getContent, getContents, getRootParentValue, } from '@/utils/editors/data';
 import { enterKey } from './enterKey';
+import { selectionBasedAction } from './selectionBasedAction';
 
 
 
@@ -16,6 +17,50 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
         return
     }
+
+
+    // shortcuts
+    if (event.key === "Shift") {
+        /**
+         * save the key Shift has been clicked and is being for the shortcut
+         * */
+        return
+    }
+    if (event.key === "Meta") {
+        /**
+         * save the key Meta has been clicked and is being for the shortcut
+         * */
+        return
+    }
+    if (event.key === "Control") {
+        /**
+         * save the key Control has been clicked and is being for the shortcut
+         * */
+        return
+    }
+    if (event.key === "Alt") {
+        /**
+         * save the key Alt has been clicked and is being for the shortcut
+         * */
+        return
+    }
+
+    if (event.key === "CapsLock") {
+        /**
+         * save the key Alt has been clicked and is being for the shortcut
+         * */
+        return
+    }
+
+    if (event.key === "Escape") {
+        /**
+         * save the key Alt has been clicked and is being for the shortcut
+         * */
+        return
+    }
+
+
+
 
     // call the function getSelect to get the node and the current selection 
     let editorData = getCurrentlyEditedElement();
@@ -59,6 +104,17 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
      * call the getTextSelection to fetch the selected text in a form of an array
      */
 
+    const selectedValues = getSelectedElements();
+
+    console.log("selectedValues", selectedValues);
+
+    if (selectedValues.length > 0) {
+        selectionBasedAction({ event, selectedValues })
+        return
+    }
+
+
+
     // setup an if to check when there is text selection here
 
     /**
@@ -69,7 +125,6 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key.length === 1) {
         keyInputUpdate({
             id,
-            node,
             key: event.key,
             currentPosition,
         })
@@ -94,16 +149,6 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     }
 
 
-
-    if (event.key === "Tap") {
-        /**
-         * check the previous clicked value move the content by one margin 
-         * in any direction by updating the indent value and adding a margin value 
-         * to the node
-         * */
-    }
-
-
     if (event.key === "Enter") {
 
         enterKey({
@@ -122,27 +167,15 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
          * */
     }
 
-    // shortcuts
-    if (event.key === "Shift") {
+
+    if (event.key === "Tab") {
         /**
-         * save the key Shift has been clicked and is being for the shortcut
+         * check the previous clicked value move the content by one margin 
+         * in any direction by updating the indent value and adding a margin value 
+         * to the node
          * */
     }
-    if (event.key === "Meta") {
-        /**
-         * save the key Meta has been clicked and is being for the shortcut
-         * */
-    }
-    if (event.key === "Control") {
-        /**
-         * save the key Control has been clicked and is being for the shortcut
-         * */
-    }
-    if (event.key === "Alt") {
-        /**
-         * save the key Alt has been clicked and is being for the shortcut
-         * */
-    }
+
 
     if (skipPrevention)
         event.preventDefault();
