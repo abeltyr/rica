@@ -1,27 +1,7 @@
-import { EditorStateContentType, } from '@/interface/editor';
-import { fetchLastChild, getChildren, getChildrenIndex, getContent, getRootParentValue, removeChildrenContent, updateValueContent, validateId } from '@/utils/editors/data';
-import { backSpaceMovement } from './deleteMovement';
+import { fetchLastChild, getChildrenIndex, getContent, removeChildrenContent, validateId } from '@/utils/editors/data';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
 
-
-const getLastFirstChildId = (value: EditorStateContentType): string => {
-
-    let id;
-    if (value.children) {
-        const children = getChildren({ parentId: value.children })
-        if (children.length > 0) {
-            const content = getContent({ id: children[0].contentId })
-            id = getLastFirstChildId(content);
-        } else {
-            id = value.id
-        }
-    } else {
-        id = value.id
-    }
-
-    return id
-}
 
 export const deleteKey = (
     {

@@ -21,9 +21,11 @@ export const contentUpdate = (
         caretPosition: number
     }) => {
 
-
-    console.log("Root is just a normal content so just need to split the text", caretPosition)
-
+    /**
+     * first create The new root as a content, since this one is a content based it will inherit the parent 
+     * type and extra data, while the content value will be extracted from the currentRootContent based on 
+     * the caret position then update the content value of the current content
+     */
     const newRoot = {
         ...currentRootContent,
         id: v4(),
@@ -31,16 +33,14 @@ export const contentUpdate = (
         content: currentRootContent.content!.substring(caretPosition, currentRootContent.content!.length),
         children: undefined
     }
-
     currentRootContent.content = currentRootContent.content!.substring(0, caretPosition);
-
     upsetContent({ id: newRoot.id, value: newRoot })
     updateValueContent({ id: currentRootContent.id, value: currentRootContent.content })
 
 
+
+    // recreate the node with the newly update data and generate and insert the new Root
     const contentNode = childIntegration({ editorStateData: newRoot })
-
-
     if (rootIndex + 1 >= rootNode.childNodes.length) {
         addChildren({ parentId: parentClass, value: { contentId: newRoot.id, } })
         rootNode.appendChild(contentNode)

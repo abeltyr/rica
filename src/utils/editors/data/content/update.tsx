@@ -118,6 +118,8 @@ export const updateContentChildren = async ({ id, childrenId }: { id: string, ch
 
 
 export const validateId = (id: string) => {
+
+    // validate the id since in some case the inner content are give sub text to distinguish them from the parent
     let newId = id;
 
     if (id.includes(subClassName)) newId = id.replace(subClassName, "")

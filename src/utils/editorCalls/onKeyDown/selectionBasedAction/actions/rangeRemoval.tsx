@@ -1,6 +1,6 @@
 import { EditorStateContentType, SelectorType, ValueType } from '@/interface/editor'
 import { parentClass } from '@/utils/commons'
-import { getChildren, getChildrenIndex, getFirstChildId, getLastFirstChildId, removeChildrenContent } from '@/utils/editors/data/children'
+import { getChildren, getChildrenIndex, getFirstChildId, removeChildrenContent } from '@/utils/editors/data/children'
 import { trimLeft, trimRight } from '../utils'
 import { backSpaceMovement } from '../../backSpace/backSpaceMovement'
 import { getContent } from '@/utils/editors/data'

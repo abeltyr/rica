@@ -1,5 +1,5 @@
 import { getContent, getContents, getRootParentValue, updateValueContent, validateId } from '@/utils/editors/data/content';
-import { getAllChildren, getLastFirstChildId, } from '@/utils/editors/data/children';
+import { getAllChildren, getFirstChildId, } from '@/utils/editors/data/children';
 import { backSpaceMovement } from './backSpaceMovement';
 import { updateCaretToMatch } from '@/utils/actions';
 import { fetchBeforeLastContent, parentRemoval } from './actions';
@@ -29,7 +29,7 @@ export const backSpaceKey = (
             let moveUp = false;
             const rootParentId = getRootParentValue({ contentValue: content });
             const rootContent = getContent({ id: rootParentId });
-            const firstChildId = getLastFirstChildId(rootContent)
+            const firstChildId = getFirstChildId(rootContent)
             if (firstChildId === contentId) moveUp = true
 
             if (moveUp) {
