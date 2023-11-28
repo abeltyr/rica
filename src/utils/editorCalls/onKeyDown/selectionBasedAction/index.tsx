@@ -1,10 +1,9 @@
 import { SelectorType } from '@/interface/editor';
-import { getContent, getRootParentValue, validateId } from '@/utils/editors/data';
-import { removalAction } from './removalAction';
-import { finalPosition } from './finalPosition';
+import { getContent, getRootParentValue } from '@/utils/editors/data';
 import { keyInputUpdate } from '../keyInput';
 import { enterKey } from '../enterKey';
 import { updateCaretToMatch } from '@/utils/actions';
+import { finalPosition, removalAction } from './actions';
 
 
 export const selectionBasedAction = async ({
@@ -17,19 +16,27 @@ export const selectionBasedAction = async ({
 
 
     let preventDefault = false;
+
+    /// ---------------- Edge Case  ---------------- ///
     if (event.key === "Tab") {
         console.log("give the left side margin from the selected root")
         event.preventDefault();
         return
     }
 
+    /// ---------------- Edge Case End ---------------- ///
+
+
+
     const firstContent = getContent({ id: selectedValues[0].id });
     const lastContent = getContent({ id: selectedValues[selectedValues.length - 1].id });
-
     const firstRootId = getRootParentValue({ contentValue: firstContent })
 
     // remove the selected data here
     await removalAction(selectedValues)
+
+
+
 
 
     let id = selectedValues[0].id
@@ -41,8 +48,10 @@ export const selectionBasedAction = async ({
         lastContent,
         selectedValues
     })
+
     id = data.id;
     caretPosition = data.caretPosition;
+
 
     if (event.key.length === 1) {
         keyInputUpdate({
@@ -73,15 +82,7 @@ export const selectionBasedAction = async ({
     }
 
 
-
-
-    if (event.key === "Backspace") {
-        console.log("basic action added with the backspace")
-        preventDefault = true;
-    }
-
-    if (event.key === "Delete") {
-        console.log("basic action added with the delete ")
+    if (event.key === "Backspace" || event.key === "Delete") {
         preventDefault = true;
     }
 

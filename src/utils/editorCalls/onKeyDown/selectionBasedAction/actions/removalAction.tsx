@@ -1,7 +1,7 @@
 import { SelectorType } from '@/interface/editor';
 import { getLastChildId } from '@/utils/editors/data/children';
 import { getContent, validateId, getRootParentValue } from '@/utils/editors/data';
-import { inlineRemoval, rangeRemoval } from './actions';
+import { inlineRemoval, rangeRemoval } from '.';
 
 
 export const removalAction = (selectedValues: SelectorType[],

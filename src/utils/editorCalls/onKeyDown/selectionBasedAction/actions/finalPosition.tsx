@@ -1,5 +1,4 @@
 import { EditorStateContentType, SelectorType } from '@/interface/editor';
-import { getContent } from '@/utils/editors/data';
 import { getCurrentlyEditedElement } from '@/utils/editors/node';
 
 
