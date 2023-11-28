@@ -115,37 +115,40 @@ export const childrenUpdate = async (
         // for children with only one child the parent inherit it data and that child is removed
         if (newChildren.length === 1) {
             const contentData = getContent({ id: newChildren[0].contentId });
-            newRoot = {
-                ...contentData,
-                id: newRoot.id,
-                parentId: undefined,
-            }
-            if (contentData.children) {
-                const children = getChildren({ parentId: contentData.children });
-                children.map((value, index) => {
-                    if (children) children[index].parentId = newRoot.id;
-                    updateParentContent({ id: value.contentId, parentId: newRoot.id })
-                    updateChildrenValue({
-                        contentId: value.contentId,
-                        parentId: value.parentId,
-                        value: {
+            if (contentData.type != "InlineLink") {
+                newRoot = {
+                    ...contentData,
+                    id: newRoot.id,
+                    parentId: undefined,
+                }
+                if (contentData.children) {
+                    const children = getChildren({ parentId: contentData.children });
+                    children.map((value, index) => {
+                        if (children) children[index].parentId = newRoot.id;
+                        updateParentContent({ id: value.contentId, parentId: newRoot.id })
+                        updateChildrenValue({
                             contentId: value.contentId,
-                            parentId: newRoot.id
-                        }
+                            parentId: value.parentId,
+                            value: {
+                                contentId: value.contentId,
+                                parentId: newRoot.id
+                            }
+                        })
                     })
-                })
-                upsetChildren({ parentId: newRoot.id, value: children })
-                upsetChildren({ parentId: contentData.id, value: [] });
-                removeChildren({ parentId: contentData.id, })
-                newRoot.children = newRoot.id;
-                newRoot.content = undefined;
-            } else {
-                newRoot.children = undefined;
-                newRoot.content = contentData.content;
-            }
-            removeContent({ id: contentData.id });
+                    upsetChildren({ parentId: newRoot.id, value: children })
+                    upsetChildren({ parentId: contentData.id, value: [] });
+                    removeChildren({ parentId: contentData.id, })
+                    newRoot.children = newRoot.id;
+                    newRoot.content = undefined;
+                } else {
+                    newRoot.children = undefined;
+                    newRoot.content = contentData.content;
+                }
+                removeContent({ id: contentData.id });
 
-            addNewChildren = false;
+                addNewChildren = false;
+
+            }
         }
 
         if (addNewChildren) {

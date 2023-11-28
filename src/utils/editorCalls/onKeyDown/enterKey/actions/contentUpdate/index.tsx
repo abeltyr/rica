@@ -1,11 +1,9 @@
 import { EditorStateContentType, ValueType } from '@/interface/editor';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { addChildren, insertChildren } from '@/utils/editors/data';
 import { updateValueContent, upsetContent } from '@/utils/editors/data/content';
-import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
-import { insertNode } from '../utils';
+import { insertNode } from '../../utils';
 
 export const contentUpdate = async (
     {
