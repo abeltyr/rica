@@ -12,6 +12,7 @@ export const h1Element = (
     const element = document.createElement('h1');
     element.setAttribute('id', id);
     element.setAttribute('key', id);
+    element.setAttribute('placeholder', " ");
     element.className = `font-extrabold tracking-tight text-4xl lg:text-5xl break-words cursor-text ${indentSetup(editorStateData.indent)} ${alignmentCheck(editorStateData.format)} ${editorStateData.className}`;
     return element
 }

@@ -12,6 +12,7 @@ export const pElement = (
     const element = document.createElement('p');
     element.setAttribute('id', id);
     element.setAttribute('key', id);
+    element.setAttribute('placeholder', " ");
     element.className = `leading-7 outline-none cursor-text ${indentSetup(editorStateData.indent)} ${alignmentCheck(editorStateData.format)} ${editorStateData.className}`;
     return element
 }

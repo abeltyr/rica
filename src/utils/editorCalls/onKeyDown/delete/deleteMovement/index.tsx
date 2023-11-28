@@ -1,9 +1,5 @@
-import { EditorStateContentType, ValueType } from '@/interface/editor';
-import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getAllChildren, getChildren, getContent, getContents, getRootParentIndex, removeChildren, removeChildrenContent, removeChildrenData, removeContent, updateChildrenValue, updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent, validateId } from '@/utils/editors/data';
-import { childIntegration } from '@/utils/render';
-import { v4 } from 'uuid';
+import { getAllChildren, getChildren, getContent, getContents, getRootParentIndex, validateId } from '@/utils/editors/data';
 import { bch_cch } from './actions/bch_cch';
 import { bch_cco } from './actions/bch_cco';
 import { bch_cco_empty } from './actions/bch_cco_empty';

@@ -1,5 +1,5 @@
 import { getChildren, getChildrenIndex, removeChildrenContent } from '@/utils/editors/data/children'
-import { getContent, removeContent, updateValueContent } from '@/utils/editors/data/content'
+import { getContent, updateValueContent } from '@/utils/editors/data/content'
 
 export const trimRight = ({
     id,
@@ -11,6 +11,7 @@ export const trimRight = ({
     carterPosition: number
 }) => {
     const initialContent = getContent({ id })
+
     let value: string | undefined;
     if (initialContent.content) {
         value = initialContent.content.substring(carterPosition, initialContent.content.length)

@@ -18,8 +18,10 @@ export const enterKey = async (
     ///------------------------Validate And Collect The Need Data------------------------ ///
 
     // prepare the current selected text and caretPosition
-    const contentId = validateId(id)
+    let contentId = validateId(id)
     const content = getContent({ id: contentId })
+    if (content.children)
+        contentId = getFirstChildId(content);
     const contentValue = content.content ?? "";
     let caretPosition = currentPosition;
 

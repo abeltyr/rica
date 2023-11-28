@@ -9,16 +9,16 @@ export const removalAction = (selectedValues: SelectorType[],
 
 
     const firstContentId = validateId(selectedValues[0].id)
-    const lastContentId = validateId(selectedValues[selectedValues.length - 1].id)
-
-
     const firstContent = getContent({ id: firstContentId })
     const firstChildRootId = getRootParentValue({ contentValue: firstContent })
 
+
+    const lastContentId = validateId(selectedValues[selectedValues.length - 1].id)
     const lastContent = getContent({ id: lastContentId })
     const lastChildRootId = getRootParentValue({ contentValue: lastContent })
-    const lastRootContent = getContent({ id: lastChildRootId })
 
+
+    const lastRootContent = getContent({ id: lastChildRootId })
     const lastRootLastChildId = getLastChildId(lastRootContent)
 
 

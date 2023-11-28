@@ -24,6 +24,15 @@ export const getContent = ({ id }: { id: string, }): EditorStateContentType => {
     }
 }
 
+export const getActualContent = ({ id }: { id: string, }): EditorStateContentType | undefined => {
+    const newId = validateId(id)
+    const data = contents[newId]
+    if (data) {
+        const value: EditorStateContentType = JSON.parse(JSON.stringify(data))
+        return value;
+    }
+}
+
 export const getContents = () => {
     const value: EditorContentType = JSON.parse(JSON.stringify(contents))
     return value;
