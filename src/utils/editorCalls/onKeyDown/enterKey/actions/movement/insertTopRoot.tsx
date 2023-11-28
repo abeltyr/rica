@@ -4,7 +4,7 @@ import { insertChildren, upsetContent } from '@/utils/editors/data';
 import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 
-export const moveDown = (
+export const insertTopRoot = (
     {
         currentRootContent,
         parentChildren,
@@ -16,9 +16,11 @@ export const moveDown = (
         rootIndex: number,
         parentChildren: ValueType[]
     }) => {
-    console.info("MDown - moving down because it is at the root")
-    const newRoot = {
-        ...currentRootContent,
+    const newRoot: EditorStateContentType = {
+        type: "P",
+        indent: currentRootContent.indent,
+        direction: currentRootContent.direction,
+        className: "",
         children: undefined,
         content: "",
         id: v4(),
@@ -28,7 +30,6 @@ export const moveDown = (
     const contentNode = childIntegration({ editorStateData: newRoot })
     const nextContentNode = document.getElementById(parentChildren[rootIndex].contentId);
     rootNode.insertBefore(contentNode, nextContentNode)
-
 
     upsetContent({ id: newRoot.id, value: newRoot })
     insertChildren({ index: rootIndex, parentId: parentClass, value: { contentId: newRoot.id, } })

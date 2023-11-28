@@ -1,7 +1,7 @@
 import { EditorStateContentType, SelectorType } from '@/interface/editor'
 import { getChildren, getChildrenIndex, removeChildrenContent } from '@/utils/editors/data/children'
 import { trimLeft, trimRight } from '../utils'
-import { getContent, getSecondParentValue, updateValueContent } from '@/utils/editors/data/content'
+import { getContent, getSecondLevelParentId, updateValueContent } from '@/utils/editors/data/content'
 
 export const inlineRemoval = (
     {
@@ -33,12 +33,12 @@ export const inlineRemoval = (
 
         const children = getChildren({ parentId: firstChildRootId });
 
-        const secondLayerFirstChildId = getSecondParentValue({
+        const secondLayerFirstChildId = getSecondLevelParentId({
             contentId: firstContentId,
             finalId: firstChildRootId
         });
 
-        const secondLayerLastChildId = getSecondParentValue({
+        const secondLayerLastChildId = getSecondLevelParentId({
             contentId: lastContentId,
             finalId: lastChildRootId
         });

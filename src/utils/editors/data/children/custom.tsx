@@ -1,6 +1,6 @@
 import { EditorStateContentType, ValueType } from '@/interface/editor';
 import { v4 } from 'uuid';
-import { getContent, getSecondParentValue, updateParentContent, updateValueContent, upsetContent } from '@/utils/editors/data';
+import { getContent, getSecondLevelParentId, updateParentContent, updateValueContent, upsetContent } from '@/utils/editors/data';
 import { getChildren, getChildrenIndex } from '@/utils/editors/data/children/index';
 import { children } from './data';
 import { updateTextValue } from '@/utils/editors/node';
@@ -12,7 +12,7 @@ export const rootChildCutter = async ({ parentId, contentId, currentPosition }: 
     let contentValue: string | undefined;
 
     // first let fetch the first child under the root and the parent of the current content 
-    const secondChildrenId = await getSecondParentValue({ contentId, id: contentId, finalId: parentId });
+    const secondChildrenId = await getSecondLevelParentId({ contentId, id: contentId, finalId: parentId });
 
     let currentContentId = contentId
     let childrenData: ValueType[] = await getChildren({ parentId: parentId });

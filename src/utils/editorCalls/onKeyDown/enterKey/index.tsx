@@ -1,8 +1,8 @@
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getChildren, getFirstChildId, getRootParentIndex } from '@/utils/editors/data';
+import { getChildren, getFirstChildId, getLastChildId, getRootParentIndex } from '@/utils/editors/data';
 import { getContent, getRootParentValue, validateId } from '@/utils/editors/data/content';
-import { childrenUpdate, contentUpdate, moveDown } from './actions';
+import { childrenUpdate, contentUpdate, insertBottomRoot, insertTopRoot } from './actions';
 
 
 
@@ -18,8 +18,9 @@ export const enterKey = async (
     ///------------------------Validate And Collect The Need Data------------------------ ///
 
     // prepare the current selected text and caretPosition
-    let contentId = validateId(id)
-    let content = getContent({ id: contentId })
+    const contentId = validateId(id)
+    const content = getContent({ id: contentId })
+    const contentValue = content.content ?? "";
     let caretPosition = currentPosition;
 
 
@@ -47,28 +48,54 @@ export const enterKey = async (
 
     ///------------------------Edge Case based update------------------------ ///
     /**
-     * When the caret at the zero index of the content and at the zero of the root
-     * should follow a different case in which we just move the current root down and 
-     * create a new root to insert before it
+     * When the caret is at the beginning of both the content and the root, 
+     * a distinct procedure is followed. In this scenario, we lower the existing 
+     * root and establish a new root, placing it in front of the lowered one.
      */
     if (currentPosition === 0) {
 
-        // fetch the id of the 
-
+        /**
+         * fetching the ID of the root's first child /first child and comparing 
+         * it to the ID of the content where our caret's position is at. 
+        */
         const firstChildId = getFirstChildId(currentRootContent)
         if (firstChildId === contentId) {
-            moveDown({
+            insertTopRoot({
                 currentRootContent,
                 parentChildren,
                 rootIndex,
                 rootNode
             })
-            updateCaretToMatch({ id: contentId, currentPosition: caretPosition })
+            updateCaretToMatch({ id: contentId, currentPosition: 0 })
             return
         }
     }
 
-    //TODO: do the edge case for the caret position is at the end of the root
+
+    /**
+    * When the caret is located at the end of both the content and the root, 
+    * a different strategy is implemented. Here, we create a new root and that 
+    * root directly underneath the current one.
+    */
+    if (currentPosition >= contentValue.length) {
+
+        /**
+         * fetching the ID of the root's las child /las child and comparing 
+         * it to the ID of the content where our caret's position is at. 
+        */
+        const lastChildId = getLastChildId(currentRootContent);
+        if (lastChildId === contentId) {
+            const data = await insertBottomRoot({
+                currentRootContent,
+                parentChildren,
+                rootIndex,
+                rootNode
+            })
+            updateCaretToMatch({ id: data.id, currentPosition: 0 })
+            return
+        }
+    }
+
 
     ///------------------------Edge Case based update End------------------------ ///
 

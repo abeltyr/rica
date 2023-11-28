@@ -1,8 +1,15 @@
 import { EditorStateContentType } from '@/interface/editor';
-import { getContent, getLastChild, getRootParentValue, upsetContent } from '@/utils/editors/data';
+import { upsetContent } from '@/utils/editors/data';
 import { v4 } from 'uuid';
 
 export const splitContent = ({ contentData, caretPosition, newRootId, updatedParentId }: { contentData: EditorStateContentType, caretPosition: number, newRootId?: string, updatedParentId?: string }) => {
+
+
+
+    /**
+     * split an existing content in two new content named updatedContent and newContent
+     * insert those contents to the content pool and return the contents back up
+     *  */
 
     let updatedContent: EditorStateContentType | undefined;
     let newContent: EditorStateContentType | undefined;
@@ -18,12 +25,7 @@ export const splitContent = ({ contentData, caretPosition, newRootId, updatedPar
             parentId: updatedParentId
         }
 
-        const rootId = getRootParentValue({ contentValue: contentData })
-        const root = getContent({ id: rootId })
-
-
-        const lastChildId = getLastChild(root);
-        if (newValue.length > 0 || (newValue.length === 0 && lastChildId === contentData.id))
+        if (newValue.length > 0)
             newContent = {
                 ...contentData,
                 id: v4(),

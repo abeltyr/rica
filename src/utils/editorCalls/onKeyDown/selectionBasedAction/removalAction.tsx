@@ -1,5 +1,5 @@
 import { SelectorType } from '@/interface/editor';
-import { getLastChild } from '@/utils/editors/data/children';
+import { getLastChildId } from '@/utils/editors/data/children';
 import { getContent, validateId, getRootParentValue } from '@/utils/editors/data';
 import { inlineRemoval, rangeRemoval } from './actions';
 
@@ -19,7 +19,7 @@ export const removalAction = (selectedValues: SelectorType[],
     const lastChildRootId = getRootParentValue({ contentValue: lastContent })
     const lastRootContent = getContent({ id: lastChildRootId })
 
-    const lastRootLastChildId = getLastChild(lastRootContent)
+    const lastRootLastChildId = getLastChildId(lastRootContent)
 
 
     if (firstChildRootId !== lastChildRootId) {

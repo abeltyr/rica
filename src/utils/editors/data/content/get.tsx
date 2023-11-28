@@ -43,11 +43,11 @@ export const getRootParentValue = ({ contentValue }: { contentValue: EditorState
     return id;
 }
 
-export const getSecondParentValue = ({ contentId, finalId = "" }: { contentId: string, finalId: string }) => {
+export const getSecondLevelParentId = ({ contentId, finalId = "" }: { contentId: string, finalId: string }) => {
     const contentValue = getContent({ id: contentId })
     let newParentID = contentValue.id;
     if (contentValue.parentId && finalId != contentValue.parentId) {
-        newParentID = getSecondParentValue({ contentId: contentValue.parentId, finalId })
+        newParentID = getSecondLevelParentId({ contentId: contentValue.parentId, finalId })
     }
     return newParentID;
 }
