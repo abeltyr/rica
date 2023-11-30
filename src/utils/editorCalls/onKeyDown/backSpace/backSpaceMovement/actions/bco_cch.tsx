@@ -1,7 +1,7 @@
-import { EditorStateContentType } from '@/interface/editor';
+import { EditorStateContentType, ValueType } from '@/interface/editor';
 import { updateCaretToMatch } from '@/utils/actions';
 import { parentClass } from '@/utils/commons';
-import { getChildren, getContent, removeChildren, removeChildrenData, removeContent, updateContentChildren, updateParentContent, upsetChildren, upsetContent } from '@/utils/editors/data';
+import { getChildren, getContent, mergeContent, removeChildren, removeChildrenContent, removeChildrenData, removeContent, updateContentChildren, updateParentContent, updateValueContent, upsetChildren, upsetContent } from '@/utils/editors/data';
 import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 
@@ -22,19 +22,39 @@ export const bco_cch = (
     const previousNode = document.getElementById(beforeContent.id)
     const currentNode = document.getElementById(currentContent.id)
 
-    const newContent = {
-        ...beforeContent,
-        id: v4(),
-        parentId: beforeContent.id,
-    }
-    newContent.type = "P"
+    let caretPosition = 0;
+    const { mergedContent } = mergeContent({
+        firstContent: beforeContent,
+        secondContent: currentContent,
+    })
 
-    let newChildren = [
-        {
-            contentId: newContent.id,
-            parentId: beforeContent.id
+
+
+    let newChildren: ValueType[] = []
+
+    if (mergedContent) {
+        removeChildren({ parentId: mergedContent.id })
+        upsetContent({
+            id: mergedContent.id,
+            value: mergedContent,
+        })
+        caretPosition = (mergedContent.content ?? "").length - (beforeContent.content ?? "").length
+    } else {
+        const newContent: EditorStateContentType = {
+            ...beforeContent,
+            id: v4(),
+            parentId: beforeContent.id,
+            type: "P"
         }
-    ]
+        newChildren = [
+            {
+                contentId: newContent.id,
+                parentId: beforeContent.id
+            }
+        ]
+        upsetContent({ id: newContent.id, value: newContent })
+
+    }
 
     currentChildren.forEach((value, _) => {
         newChildren =
@@ -48,14 +68,13 @@ export const bco_cch = (
         updateParentContent({ id: value.contentId, parentId: beforeContent.id })
     })
 
-    upsetContent({ id: newContent.id, value: newContent })
-    updateParentContent({ id: currentContent.id, parentId: beforeContent.id, })
+
     upsetChildren({ value: newChildren, parentId: beforeContent.id })
     updateContentChildren({ childrenId: beforeContent.id, id: beforeContent.id })
-    removeChildrenData({ parentId: parentClass, contentId: currentContent.id })
-    removeContent({ id: currentContent.id })
+
+
     upsetChildren({ parentId: currentContent.id, value: [] })
-    removeChildren({ parentId: currentContent.id })
+    removeChildrenContent({ parentId: parentClass, contentId: currentContent.id })
 
     const content = getContent({ id: beforeContent.id });
 
@@ -64,5 +83,6 @@ export const bco_cch = (
         previousNode.replaceWith(newChild);
     if (currentNode) currentNode.remove()
 
-    updateCaretToMatch({ id: id, currentPosition: 0 })
+    updateCaretToMatch({ id: id, currentPosition: caretPosition })
+
 }

@@ -29,8 +29,8 @@ export const backSpaceMovement = async (id: string) => {
         if (beforeContent.children && currentContent.children) {
             await bch_cch({
                 id,
-                beforeContentId: beforeContentId,
-                currentContentId: currentContentId,
+                beforeContentId,
+                currentContentId,
             });
         }
         else if (beforeContent.children && currentContent.content != undefined) {

@@ -35,7 +35,7 @@ export const getRootParentIndex = (id: string): number | undefined => {
     if (content) {
         let parentId = content.parentId;
 
-        if (parentId) {
+        if (parentId && parentId != id) {
             rootParentIndex = getRootParentIndex(parentId)
         } else {
             parentId = parentClass;
@@ -52,11 +52,12 @@ export const fetchLastChild = (value: EditorStateContentType): EditorStateConten
     let contentValue: EditorStateContentType | undefined;
     if (value.content != undefined) {
         contentValue = value
-    } else if (value.children) {
+    } else if (value.children && value.children != value.id) {
         const children = getChildren({ parentId: value.children });
         if (children.length > 0) {
             const content = getContent({ id: children[children.length - 1].contentId });
-            contentValue = fetchLastChild(content);
+            if (content != value)
+                contentValue = fetchLastChild(content);
         }
     }
 
@@ -71,7 +72,8 @@ export const fetchFirstChild = (value: EditorStateContentType): EditorStateConte
     } else if (value.children) {
         const children = getChildren({ parentId: value.children });
         const content = getContent({ id: children[0].contentId });
-        contentValue = fetchFirstChild(content);
+        if (value != content)
+            contentValue = fetchFirstChild(content);
     }
 
     return contentValue

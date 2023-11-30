@@ -7,6 +7,8 @@ import { childIntegration } from '@/utils/render';
 import { v4 } from 'uuid';
 import { splitChildren } from './utils';
 import { insertNode } from '../../utils';
+import { newChildrenGenerator } from './newChildren';
+import { updateChildrenGenerator } from './updateChildren';
 
 export const childrenUpdate = async (
     {
@@ -76,97 +78,19 @@ export const childrenUpdate = async (
 
 
     if (updatedChildren) {
-        let currentRoot: EditorStateContentType = {
-            ...currentRootContent,
-            parentId: undefined,
-            content: undefined,
-            children: currentRootContent.id
-        }
-        upsetContent({ id: currentRoot.id, value: currentRoot })
-
-
-        if (currentRoot.children)
-            upsetChildren({ parentId: currentRoot.children, value: updatedChildren })
-        else
-            removeChildren({ parentId: currentRoot.id, })
-
-
-        const newNode = childIntegration({ editorStateData: currentRoot })
-        const currentNode = document.getElementById(rootId);
-        if (currentNode)
-            currentNode.replaceWith(newNode)
+        await updateChildrenGenerator({
+            currentRootContent,
+            rootId,
+            updatedChildren
+        })
     }
 
-
-
     if (newChildren) {
-
-
-        let newRoot: EditorStateContentType = {
-            ...currentRootContent,
-            id: newRootId,
-            parentId: undefined,
-            content: undefined,
-            children: newRootId
-        }
-
-
-        let addNewChildren = true;
-        // for children with only one child the parent inherit it data and that child is removed
-        if (newChildren.length === 1) {
-            const contentData = getContent({ id: newChildren[0].contentId });
-            if (contentData.type != "InlineLink") {
-                newRoot = {
-                    ...contentData,
-                    id: newRoot.id,
-                    parentId: undefined,
-                }
-                if (contentData.children) {
-                    const children = getChildren({ parentId: contentData.children });
-                    children.map((value, index) => {
-                        if (children) children[index].parentId = newRoot.id;
-                        updateParentContent({ id: value.contentId, parentId: newRoot.id })
-                        updateChildrenValue({
-                            contentId: value.contentId,
-                            parentId: value.parentId,
-                            value: {
-                                contentId: value.contentId,
-                                parentId: newRoot.id
-                            }
-                        })
-                    })
-                    upsetChildren({ parentId: newRoot.id, value: children })
-                    upsetChildren({ parentId: contentData.id, value: [] });
-                    removeChildren({ parentId: contentData.id, })
-                    newRoot.children = newRoot.id;
-                    newRoot.content = undefined;
-                } else {
-                    newRoot.children = undefined;
-                    newRoot.content = contentData.content;
-                }
-                removeContent({ id: contentData.id });
-
-                addNewChildren = false;
-
-            }
-        }
-
-        if (addNewChildren) {
-            if (newRoot.children)
-                upsetChildren({ parentId: newRoot.children, value: newChildren })
-            else
-                removeChildren({ parentId: newRoot.id, })
-
-        }
-
-        upsetContent({ id: newRoot.id, value: newRoot })
-
-
-
-        await insertNode({
-            contentData: newRoot,
+        await newChildrenGenerator({
+            currentRootContent,
+            newChildren,
+            newRootId,
             parentChildren,
-            parentId: parentClass,
             rootIndex,
             rootNode
         })
