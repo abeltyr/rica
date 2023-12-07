@@ -39,13 +39,11 @@ export const htmlConvertor = async (
         const nodeData = node.childNodes[i];
         if (nodeData.nodeType === 1 && nodeData instanceof Element && nodeData.tagName != "BR") {
             if (nodeData.firstChild?.nodeType === 3) {
-                console.log("Here as well");
                 const value = nodeConvertor({ node: node.childNodes[i], parentId });
                 if (value)
                     children = [...children, value]
 
             } else {
-                console.log("Here");
                 let childContentId = await htmlConvertor({ node: node.childNodes[i] })
                 if (childContentId) {
                     children = [...children, {
@@ -86,7 +84,6 @@ const nodeConvertor = (
         if (!contentId) {
             contentId = v4();
             if (childNode instanceof Element) {
-                console.log("childNode", childNode)
                 const value = elementConvertor(childNode)
                 if (value) {
                     upsetContent({ id: value.id, value, })

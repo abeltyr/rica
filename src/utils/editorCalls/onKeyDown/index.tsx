@@ -6,6 +6,7 @@ import { deleteKey } from './delete';
 import { fetchLastChild, getAllChildren, getContent, getContents, getRootParentValue, } from '@/utils/editors/data';
 import { enterKey } from './enterKey';
 import { selectionBasedAction } from './selectionBasedAction';
+import { getUndoList, insertToUndoList } from '@/utils/editors/data/trackHistory';
 
 
 
@@ -58,6 +59,8 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
          * */
         return
     }
+
+
 
 
 
@@ -123,6 +126,7 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
 
 
     if (event.key.length === 1) {
+        insertToUndoList({ action: "Render", index: 0, id, reset: true })
         keyInputUpdate({
             id,
             key: event.key,
@@ -180,7 +184,8 @@ export const onKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (skipPrevention)
         event.preventDefault();
 
-    console.log(getContents());
-    console.log(getAllChildren());
+    console.log(getUndoList())
+    // console.log(getContents());
+    // console.log(getAllChildren());
 
 }
